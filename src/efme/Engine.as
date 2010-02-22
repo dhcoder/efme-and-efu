@@ -1,8 +1,12 @@
 ﻿package efme
 {
+	import flash.display.StageAlign;
+	import flash.display.StageQuality;
+	import flash.display.StageScaleMode;
+	import flash.display.StageDisplayState;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	
+
 	import efme.core.graphics2d.Screen;
 	
 	/**
@@ -38,7 +42,7 @@
 		 * @param height The desired height of your display screen.
 		 * @param clearColor The background color (hex code) of your display screen (default = Black)
 		 */
-		public function Engine(width:uint, height:uint, clearColor:uint = 0x000000):void
+		public function Engine(width:uint, height:uint, clearColor:uint = 0x000000, scale:Number = 1.0):void
 		{
 			_screen = new Screen(this, width, height, clearColor);
 		}
@@ -64,7 +68,13 @@
 		private function init(e:Event = null):void 
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
-			// entry point
+
+			stage.align = StageAlign.TOP_LEFT;
+			stage.quality = StageQuality.HIGH;
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.displayState = StageDisplayState.NORMAL;
+			
+			stage.frameRate = 60;
 		}
 
 		

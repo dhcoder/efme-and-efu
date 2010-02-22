@@ -53,6 +53,12 @@
 			_bitmap.bitmapData.fillRect(_bitmap.bitmapData.rect, _clearColor);
 		}
 
+		
+		public function drawSprite():void
+		{
+			// TODO: Implement drawSprite
+		}
+		
 		private var _bitmap:Bitmap; // Solid-color bitmap that fills the screen
 		private var _clearColor:uint;
 	}

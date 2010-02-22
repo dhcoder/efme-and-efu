@@ -8,6 +8,7 @@
 	 * A bare-bones, "Hello, world!" example, which sets up an empty
 	 * Flash application at 640x480, with a green background color.
 	 */
+	[SWF(width=640, height=480)]
 	public class Ex01_GettingStarted extends Engine
 	{
 		public function Ex01_GettingStarted()
