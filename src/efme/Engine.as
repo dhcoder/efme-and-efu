@@ -1,5 +1,6 @@
 ﻿package efme
 {
+	import efme.core.support.Assets;
 	import flash.display.StageAlign;
 	import flash.display.StageQuality;
 	import flash.display.StageScaleMode;
@@ -85,15 +86,17 @@
 		
 		private function handleFrameTick(e:TimerEvent):void
 		{
+			// TODO: Remove this return;
 			return;
+			
 			_screen.beginDraw();
 			_screen.clear();
 			_screen.endDraw();
 		}
 
-		
 		private var _screen:Screen;
-		
 		private var _frameTimer:Timer;
+		
+		private var _assets:Assets;
 	}
 }

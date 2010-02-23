@@ -6,6 +6,8 @@
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
     import flash.net.URLRequest;
 	import flash.utils.Dictionary;
 
@@ -137,7 +139,7 @@
 			var bitmapData:BitmapData = (loaderInfo.content as Bitmap).bitmapData;
 			
 			image.bitmapData = bitmapData;
-			_dictCachedBitmaps[strFile] = bitmapData;
+			_dictCachedBitmaps[strFile] = image.bitmapData;
 			
 			cleanImageDictionaries(event.target as LoaderInfo);
 		}

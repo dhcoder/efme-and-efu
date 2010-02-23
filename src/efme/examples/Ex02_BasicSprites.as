@@ -1,10 +1,13 @@
 ﻿package efme.examples
 {
+	import efme.core.graphics2d.DrawOptions;
 	import efme.Engine;
 	import efme.core.graphics2d.Image;
 	import efme.core.support.Assets;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 
 	/*
@@ -27,9 +30,6 @@
 	 */
 	public class Ex02_BasicSprites extends Engine
 	{
-//		[Embed(source = '../../../bin/example_data/image1.png')]private static const Img1:Class;
-//		[Embed(source = '../../../bin/example_data/image1.png')]private static const Img2:Class;
-		
 		private var _timer:Timer;
 
 		private var _image1:Image;
@@ -45,8 +45,8 @@
 			_image1 = new Image();
 			_image2 = new Image(128, 128);
 			
-			assets.requestImage("example_data/image_normal.png", _image1);
-			assets.requestImage("example_data/image_tiled.png", _image2);
+			assets.requestImage("data/images/image_normal.png", _image1);
+			assets.requestImage("data/images/image_tiled.png", _image2);
 			
 			_timer = new Timer(100);
 			_timer.addEventListener(TimerEvent.TIMER, handleTimer);
@@ -57,8 +57,23 @@
 		{
 			screen.beginDraw();
 			screen.clear();
-			_image1.draw(screen, 50, 50);
-			_image2.drawTile(screen, _timer.currentCount % 6, 0, 100, 100);
+//			_image1.draw(screen, new Point(50, 50));
+//			_image2.draw(screen, new Point(0, 0));
+	//		_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(100, _image2.height + 10));
+		//	_image2.drawSub(screen, new Rectangle(20, 20, 80, 20), new Point(150, _image2.height * 2 + 20));
+			
+			var drawOptions:DrawOptions = new DrawOptions();
+			drawOptions.flipX = true;
+			drawOptions.flipY = true;
+
+//			_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(0, 0));
+			_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(0, 0), drawOptions);
+			
+			_image2.draw(screen, new Point(10, 200));
+			//_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(100 + _image2.tileWidth + 10, _image2.height + 10), drawOptions);
+			//_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(100 + _image2.tileWidth + 10, _image2.height + 10), drawOptions);
+
+			
 			screen.endDraw();
 		}
 	}

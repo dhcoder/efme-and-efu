@@ -10,11 +10,12 @@
 	 * contains information about the resolution, background color, and
 	 * scale of your game.
 	 * 
-	 * <p>Internally, EFME renders its contents into this class, and the
-	 * result is displayed on the screen.</p>
+	 * <p>Furthermore, anything you render into the Screen shows up in your
+	 * Flash window.</p>
 	 * 
 	 * <p><strong>NOTE:</strong>Don't initialize this class yourself - it is
-	 * created by efme.Engine, and accessed through efme.Engine.screen.</p>
+	 * created by efme.Engine, and accessed through efme.Engine's 
+	 * <code>screen</code> property.</p>
 	 */
 	public class Screen
 	{
@@ -49,7 +50,7 @@
 		 * access this unless you know what you're doing!!
 		 * 
 		 * <p> Furthermore, you can only access this property between
-		 * beginDraw()
+		 * <code>beginDraw()</code> and <code>endDraw()</code> calls.
 		 */
 		public function get bitmapData():BitmapData { return (_isLocked ? _bitmap.bitmapData : null); }
 		
@@ -62,6 +63,11 @@
 			_clearColor = value;
 		}
 
+		/**
+		 * Call before you do any rendering to the screen. Calling any
+		 * draw functions or accessing the <code>bitmapData</code> property
+		 * will fail if you don't call this first.
+		 */
 		public function beginDraw():void
 		{
 			if (!_isLocked)
@@ -71,6 +77,11 @@
 			}
 		}
 		
+		/**
+		 * Call when you are finished with your rendering to the screen.
+		 * After this function is called, the screen will apply all the
+		 * rendering updates it received so far.
+		 */
 		public function endDraw():void 
 		{
 			if (_isLocked)
@@ -88,6 +99,7 @@
 		 */
 		public function clear():void
 		{
+			// TODO: Error if no beginDraw
 			if (_isLocked)
 			{
 				_bitmap.bitmapData.fillRect(_bitmap.bitmapData.rect, _clearColor);

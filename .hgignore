@@ -3,8 +3,8 @@
 # use glob syntax
 syntax: glob
 
-*.docproj
 *.swf
 *.orig
 *.docproj
 [Oo]bj/
+[Dd]oc/
