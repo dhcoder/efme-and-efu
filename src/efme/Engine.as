@@ -6,6 +6,8 @@
 	import flash.display.StageDisplayState;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 
 	import efme.core.graphics2d.Screen;
 	
@@ -75,10 +77,23 @@
 			stage.displayState = StageDisplayState.NORMAL;
 			
 			stage.frameRate = 60;
+			
+			_frameTimer = new Timer(4);
+			_frameTimer.addEventListener(TimerEvent.TIMER, handleFrameTick);
+			_frameTimer.start();
+		}
+		
+		private function handleFrameTick(e:TimerEvent):void
+		{
+			return;
+			_screen.beginDraw();
+			_screen.clear();
+			_screen.endDraw();
 		}
 
 		
 		private var _screen:Screen;
-
+		
+		private var _frameTimer:Timer;
 	}
 }

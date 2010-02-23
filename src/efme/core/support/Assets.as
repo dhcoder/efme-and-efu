@@ -1,4 +1,4 @@
-﻿package efme.game
+﻿package efme.core.support
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -15,71 +15,75 @@
 	 * The <code>Assets</code> class acts both as a central cache as well as a
 	 * loading manager for all game assets.
 	 * 
-	 * <p> EFME encourages on-the-fly asset loading (as opposed to using the
+	 * <p> EFME encourages on-the-fly asset loading, as opposed to using the
 	 * <code>[Embed]</code> tag, as that allows for more cooperative
-	 * development between programmers and artists (with <code>[Embed]</code>,
-	 * artists need access to a Flash compiler if they want to see their
-	 * changes).
+	 * development between programmers and artists. (When you use 
+	 * the <code>[Embed]</code> tag, artists  need to recompile the application 
+	 * if they want to see and test their changes).
 	 * 
 	 * <p> Of course, EFME recognizes the huge advantage <code>[Embed]</code>
 	 * provides, especially in the online deployment of your Flash application
 	 * (just one .swf, instead of many separated files out on the network),
 	 * so <code>Assets</code> provides an interface to handle both methods.
 	 * 
-	 * <p> After using either loading method, you are simply given your
-	 * game asset. It's possible the asset isn't totally loaded yet but
-	 * This handle allows you to pass around the asset and not
-	 * worry about whether it is still in the process of loading or not.
-	 * 
-	 * <p> While the assets are loading, you can check the overall state
-	 * by querying the <code>percentComplete</code> property. You can also
-	 * add a callback to be called when loading is complete.
-	 * 
-	 * @example
+	 * @example The following code demonstrates the on-the-fly loading method:
 	 * <listing version="3.0">
 	 * import efme.core.graphics2d.Image;
+	 * import efme.Engine;
 	 * 
-	 * //
-	 * // On-the-fly method
-	 * //
-	 * 
-	 * private var _image1:Image;
-	 * private var _image2:Image;
-	 * public function init():void
+	 * class SomeClass
 	 * {
-	 *   _image1 = new Image();
-	 *   _image2 = new Image();
-	 *   engine.assets.requestImage('data/image1.png', _image1);
-	 *   engine.assets.requestImage('data/image2.png', _image2);
-	 * }
-	 * public function render():void
-	 * {
-	 *   engine.screen.drawImage(_image1); // If still loading, it will
-	 *   engine.screen.drawImage(_image2); // draw nothing
-	 * 
-	 *   if (engine.assets.isLoadingImage(_image1))
+	 *   private var _engine:Engine;
+	 *   private var _image1:Image;
+	 *   private var _image2:Image;
+	 *   
+	 *   public function SomeClass(engine:Engine)
 	 *   {
-	 *     // Optionally handle assets that are loading
+	 *     _engine = engine;
+	 *     _image1 = new Image();
+	 *     _image2 = new Image();
+	 *     _engine.assets.requestImage('data/image1.png', _image1);
+	 *     _engine.assets.requestImage('data/image2.png', _image2);
+	 *   }
+	 * 
+	 *   public function render():void
+	 *   {
+	 *     if (_engine.assets.isLoadingImage(_image1))
+	 *     {
+	 *       // Optionally test if assets are still loading
+	 *     }
+	 * 
+	 *     _image1.draw(_engine.screen); // If still loading, it will
+	 *     _image2.draw(_engine.screen); // draw nothing
 	 *   }
 	 * }
+	 * </listing>
+	 * @example The following code demonstrates embedded asset loading:
+	 * <listing version = "3.0">
+	 * import efme.core.graphics2d.Image;
+	 * import efme.Engine;
 	 * 
-	 * //
-	 * // Embedded asset method
-	 * //
+	 * class SomeClass
+	 * {
+	 *   private var _engine:Engine;
 	 * 
-	 * [Embed(source = 'data/image1.png')]private const Img1:Class;
-	 * [Embed(source = 'data/image2.png')]private const Img2:Class;
-	 * private var _image1:Image;
-	 * private var _image2:Image;
-	 * public function init():void
-	 * {
-	 *   _image1 = engine.assets.getImage(Img1); // Loads instantly
-	 *   _image2 = engine.assets.getImage(Img2);
-	 * }
-	 * public function render():void
-	 * {
-	 *   engine.screen.drawImage(_image1);
-	 *   engine.screen.drawImage(_image2);
+	 *   [Embed(source = 'data/image1.png')]private const Img1:Class;
+	 *   [Embed(source = 'data/image2.png')]private const Img2:Class;
+	 *   private var _image1:Image;
+	 *   private var _image2:Image;
+
+	 *   public function SomeClass(engine:Engine)
+	 *   {
+	 *     _engine = engine;
+	 *     _image1 = _engine.assets.getImage(Img1); // Loads instantly
+	 *     _image2 = _engine.assets.getImage(Img2);
+	 *   }
+	 
+	 *   public function render():void
+	 *   {
+	 *     _image1.draw(_engine.screen);
+	 *     _image2.draw(_engine.screen);
+	 *   }
 	 * }
 	 * </listing>
 	 */
@@ -102,8 +106,7 @@
 			
 			if (_dictCachedBitmaps[strFileLower] != null)
 			{
-				// TODO: bitmapData
-				// image.bitmapData = _dictCachedBitmaps[strFileLower] as BitmapData;
+				image.bitmapData = _dictCachedBitmaps[strFileLower] as BitmapData;
 			}
 			else
 			{
@@ -127,17 +130,13 @@
 		
 		private function handleLoadImageComplete(event:Event):void
 		{
-			trace("handleLoadImageComplete");
 			var loaderInfo:LoaderInfo = event.target as LoaderInfo;
 			var image:Image = _dictLoaderToImage[loaderInfo] as Image;
 			var strFile:String = _dictImageToFilename[image];
 			
-			trace(loaderInfo.content);
-			trace("Loaded", strFile);
 			var bitmapData:BitmapData = (loaderInfo.content as Bitmap).bitmapData;
 			
-			// TODO: bitmapData
-			//image.bitmapData = bitmapData;
+			image.bitmapData = bitmapData;
 			_dictCachedBitmaps[strFile] = bitmapData;
 			
 			cleanImageDictionaries(event.target as LoaderInfo);
@@ -145,7 +144,6 @@
 
 		private function handleLoadImageFailed(event:IOErrorEvent):void
 		{
-			trace("handleLoadImageFailed");
 			cleanImageDictionaries(event.target as LoaderInfo);
 		}
 		
