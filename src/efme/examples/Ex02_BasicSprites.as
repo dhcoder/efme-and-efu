@@ -1,5 +1,6 @@
 ﻿package efme.examples
 {
+	import efme.core.graphics2d.AnchorStyle;
 	import efme.core.graphics2d.DrawOptions;
 	import efme.Engine;
 	import efme.core.graphics2d.Image;
@@ -48,31 +49,62 @@
 			assets.requestImage("data/images/image_normal.png", _image1);
 			assets.requestImage("data/images/image_tiled.png", _image2);
 			
-			_timer = new Timer(100);
+			_timer = new Timer(40);
 			_timer.addEventListener(TimerEvent.TIMER, handleTimer);
 			_timer.start();
 		}
 		
 		private function handleTimer(event:TimerEvent):void
 		{
+			if (_image1.bitmapData == null || _image2.bitmapData == null)
+			{
+				return;
+			}
+
 			screen.beginDraw();
 			screen.clear();
-//			_image1.draw(screen, new Point(50, 50));
-//			_image2.draw(screen, new Point(0, 0));
-	//		_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(100, _image2.height + 10));
-		//	_image2.drawSub(screen, new Rectangle(20, 20, 80, 20), new Point(150, _image2.height * 2 + 20));
 			
 			var drawOptions:DrawOptions = new DrawOptions();
-			drawOptions.flipX = true;
-			drawOptions.flipY = true;
+			drawOptions.rotate = (_timer.currentCount % 180) * 2;
+			//drawOptions.flipX = (_timer.currentCount % 360) > 180;
 
-//			_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(0, 0));
-			_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(0, 0), drawOptions);
+			var rate:uint = 3;
+			var tileX:uint = (_timer.currentCount % (_image2.numTilesX * rate)) / rate;
+
+			//_image2.drawTile(screen, tileX, 0, new Point(80, 80), drawOptions);
+
+			//drawOptions.alpha = (_timer.currentCount % 70) / 100.0 + .3;
+			_image2.drawTile(screen, tileX, 0, new Point(128, 128), drawOptions);
+
+			/*
 			
-			_image2.draw(screen, new Point(10, 200));
-			//_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(100 + _image2.tileWidth + 10, _image2.height + 10), drawOptions);
-			//_image2.drawTile(screen, _timer.currentCount % 6, 0, new Point(100 + _image2.tileWidth + 10, _image2.height + 10), drawOptions);
+			drawOptions.rotateAnchor = AnchorStyle.TOP_LEFT;
+			_image2.drawTile(screen, tileX, 0, new Point(128, 128), drawOptions);
 
+			drawOptions.rotateAnchor = AnchorStyle.TOP_MIDDLE;
+			_image2.drawTile(screen, tileX, 0, new Point(384, 128), drawOptions);
+
+			drawOptions.rotateAnchor = AnchorStyle.TOP_RIGHT;
+			_image2.drawTile(screen, tileX, 0, new Point(640, 128), drawOptions);
+
+			drawOptions.rotateAnchor = AnchorStyle.LEFT;
+			_image2.drawTile(screen, tileX, 0, new Point(128, 384), drawOptions);
+
+			drawOptions.rotateAnchor = AnchorStyle.MIDDLE;
+			_image2.drawTile(screen, tileX, 0, new Point(384, 384), drawOptions);
+
+			drawOptions.rotateAnchor = AnchorStyle.RIGHT;
+			_image2.drawTile(screen, tileX, 0, new Point(640, 384), drawOptions);
+
+			drawOptions.rotateAnchor = AnchorStyle.BOTTOM_LEFT;
+			_image2.drawTile(screen, tileX, 0, new Point(128, 640), drawOptions);
+
+			drawOptions.rotateAnchor = AnchorStyle.BOTTOM_MIDDLE;
+			_image2.drawTile(screen, tileX, 0, new Point(384, 640), drawOptions);
+
+			drawOptions.rotateAnchor = AnchorStyle.BOTTOM_RIGHT;
+			_image2.drawTile(screen, tileX, 0, new Point(640, 640), drawOptions);
+			*/
 			
 			screen.endDraw();
 		}

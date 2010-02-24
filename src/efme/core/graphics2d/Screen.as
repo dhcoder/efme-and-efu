@@ -50,9 +50,32 @@
 		 * access this unless you know what you're doing!!
 		 * 
 		 * <p> Furthermore, you can only access this property between
-		 * <code>beginDraw()</code> and <code>endDraw()</code> calls.
+		 * <code>beginDraw()</code> and <code>endDraw()</code> calls. Otherwise,
+		 * it will throw an error.
+		 * 
+		 * <p> If you want to test the screen, to see if you can draw to it
+		 * or not, check the <code>renderingAllowed</code> property.
+		 * 
+		 * @throws efme.core.errors.EfSevereError Thrown if this property is accessed outside of a beginDraw()/endDraw() pair.
 		 */
-		public function get bitmapData():BitmapData { return (_isLocked ? _bitmap.bitmapData : null); }
+		public function get bitmapData():BitmapData
+		{ 
+			if (_isLocked)
+			{
+				return _bitmap.bitmapData;
+			}
+			else
+			{
+				throw new Error("Trying to render to screen outside of beginDraw()/endDraw() pair.");
+			}
+		}
+		
+		/**
+		 * Whether the screen can currently be rendered to or not. 
+		 * <code>true</code> if a screen is between 
+		 * <code>beginDraw()</code>/<code>endDraw()</code> calls.
+		 */
+		public function get renderingAllowed():Boolean { return _isLocked; }
 		
 		/**
 		 * The background color of this display screen.

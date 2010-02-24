@@ -100,9 +100,24 @@
 			_dictCachedBitmaps = new Dictionary(true);
 		}
 		
-		public function requestImage(strFile:String, image:Image, cache:Boolean = true):void
+		/**
+		 * Request loading an image file, putting the final result into the specified
+		 * <code>Image</code>, when complete.
+		 * 
+		 * @param strFile The file to load
+		 * @param image An instance of an <code>Image</code> to hold the loaded file.
+		 * @param useCache Set to true to cache this image / use an existing image if already loaded.
+		 */
+		public function requestImage(strFile:String, image:Image, useCache:Boolean = true):void
 		{
-			// TODO: Handle errors if null image or duplicate image?
+			if (image == null)
+			{
+				throw new Error("Passed null image into Asset.requestImage");
+			}
+			else if (_dictImageToLoader[image] != null)
+			{
+				throw new Error("Requesting multiple loads into the same image");
+			}
 
 			var strFileLower:String = strFile.toLowerCase();
 			

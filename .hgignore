@@ -5,6 +5,5 @@ syntax: glob
 
 *.swf
 *.orig
-*.docproj
 [Oo]bj/
 [Dd]oc/

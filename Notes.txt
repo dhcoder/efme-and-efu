@@ -10,3 +10,7 @@ LATER
 - Error handling
 
 I already have basic image rendering working, and I need to polish that, then get text, sounds, and input up and running next. 
+
+IF/WHEN DOCUMENTING EFME FOR THE PUBLIC...
+
+Set use-network to false when working locally. I have to figure out security settings...
