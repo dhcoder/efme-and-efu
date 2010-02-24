@@ -76,7 +76,7 @@
 		 * 
 		 * <p> If you call this on an untiled Image, it will return 0.
 		 */
-		public function get numTilesX():uint { return _bitmapData.width / _tileWidth; }
+		public function get numTilesX():uint { return (_bitmapData != null ? _bitmapData.width / _tileWidth : 0); }
 
 		/**
 		 * This property is provided for convenience, and it gets the number
@@ -84,7 +84,7 @@
 		 * 
 		 * <p> If you call this on an untiled Image, it will return 0.
 		 */
-		public function get numTilesY():uint { return _bitmapData.height / _tileHeight; }
+		public function get numTilesY():uint { return (_bitmapData != null ? _bitmapData.height / _tileHeight : 0); }
 
 		/**
 		 * The inner bitmap data for this image. Don't access this unless you
