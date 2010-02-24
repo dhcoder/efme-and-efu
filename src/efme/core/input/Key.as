@@ -1,4 +1,4 @@
-﻿package punk.util 
+﻿package efme.core.input 
 {
 	/**
 	 * A collection of all key codes 

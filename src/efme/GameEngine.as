@@ -21,15 +21,12 @@
 	 * your game.
 	 * 
 	 * <p>To get started using EFME, create your own class which extends
-	 * <code>Engine</code>, and call <code>super(...)</code> with your
+	 * <code>GameEngine</code>, and call <code>super(...)</code> with your
 	 * desired setup. Then, call <code>start()</code>.</p>
-	 * 
-	 * <p>To see this in action, please review
-	 * efme.examples.Ex01_GettingStarted.</p>
 	 * 
 	 * @example The following code sets up a basic 640x480 Engine.
 	 * <listing version="3.0">
-	 * public class MyGame extends Engine
+	 * public class MyGame extends GameEngine
 	 * {
 	 *   public function MyGame()
 	 *   {

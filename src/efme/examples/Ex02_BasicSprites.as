@@ -1,6 +1,5 @@
 ﻿package efme.examples
 {
-	import efme.core.graphics2d.Anchor;
 	import efme.core.graphics2d.DrawOptions;
 	import efme.core.graphics2d.Image;
 	import efme.core.support.Assets;
@@ -73,31 +72,31 @@
 
 			/*
 			
-			drawOptions.rotateAnchor = AnchorStyle.TOP_LEFT;
+			drawOptions.rotateAnchor = Anchor.TOP_LEFT;
 			_image2.drawTile(screen, tileX, 0, new Point(128, 128), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.TOP_MIDDLE;
+			drawOptions.rotateAnchor = Anchor.TOP_MIDDLE;
 			_image2.drawTile(screen, tileX, 0, new Point(384, 128), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.TOP_RIGHT;
+			drawOptions.rotateAnchor = Anchor.TOP_RIGHT;
 			_image2.drawTile(screen, tileX, 0, new Point(640, 128), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.LEFT;
+			drawOptions.rotateAnchor = Anchor.LEFT;
 			_image2.drawTile(screen, tileX, 0, new Point(128, 384), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.MIDDLE;
+			drawOptions.rotateAnchor = Anchor.MIDDLE;
 			_image2.drawTile(screen, tileX, 0, new Point(384, 384), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.RIGHT;
+			drawOptions.rotateAnchor = Anchor.RIGHT;
 			_image2.drawTile(screen, tileX, 0, new Point(640, 384), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.BOTTOM_LEFT;
+			drawOptions.rotateAnchor = Anchor.BOTTOM_LEFT;
 			_image2.drawTile(screen, tileX, 0, new Point(128, 640), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.BOTTOM_MIDDLE;
+			drawOptions.rotateAnchor = Anchor.BOTTOM_MIDDLE;
 			_image2.drawTile(screen, tileX, 0, new Point(384, 640), drawOptions);
 
-			drawOptions.rotateAnchor = AnchorStyle.BOTTOM_RIGHT;
+			drawOptions.rotateAnchor = Anchor.BOTTOM_RIGHT;
 			_image2.drawTile(screen, tileX, 0, new Point(640, 640), drawOptions);
 			*/
 			

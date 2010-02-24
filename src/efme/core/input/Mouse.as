@@ -19,13 +19,12 @@
 		 */
 		public function Mouse(stage:Stage) 
 		{
-			stage.addEventListener(MouseEvent.CLICK, handleMouseDown);
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 			stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 		}
 		
 		private function handleMouseDown(e:MouseEvent):void
 		{
-			trace("MOUSE DOWN");
 		}
 		
 		private function handleMouseUp(e:MouseEvent):void 

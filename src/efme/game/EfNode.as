@@ -1,13 +1,13 @@
-﻿package efme.game.elements 
+﻿package efme.game
 {
 	/**
 	 * ...
 	 * @author Dherman
 	 */
-	public class Element
+	public class EfNode
 	{
 		
-		public function Element() 
+		public function EfNode() 
 		{
 			
 		}

@@ -1,13 +1,13 @@
-﻿package efme.game.elements 
+﻿package efme.game.efnodes 
 {
 	/**
 	 * ...
 	 * @author Dherman
 	 */
-	public class Sprite
+	public class EfnSprite
 	{
 		
-		public function Sprite() 
+		public function EfnSprite() 
 		{
 			
 		}

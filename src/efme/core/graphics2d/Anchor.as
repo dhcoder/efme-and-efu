@@ -7,11 +7,13 @@
 	 * An class to handle anchoring positions. Given a rectangle and an
 	 * anchoring style, you can get the corresponding point on the rectangle.
 	 * 
+	 * <pre>
 	 * TL------T------TR
 	 * |               |
 	 * L       M       R
 	 * |               |
 	 * BL------B------BR
+	 * </pre>
 	 */
 	public class Anchor
 	{

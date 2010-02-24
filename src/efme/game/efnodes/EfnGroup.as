@@ -1,12 +1,12 @@
-﻿package efme.game.elements 
+﻿package efme.game.efnodes 
 {
 	/**
 	 * ...
 	 * @author Dherman
 	 */
-	public class Group
+	public class EfnGroup
 	{
-		public function Group() 
+		public function EfnGroup() 
 		{
 			
 		}

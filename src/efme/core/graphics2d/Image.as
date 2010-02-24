@@ -11,7 +11,7 @@
 	import efme.core.graphics2d.Screen;
 	
 	/**
-	 * Class which references image data and can render it.
+	 * A class which references image data and can render it.
 	 * 
 	 * <p> The class handles both regular and tiled images. By specifying a
 	 * size in the constructor, you are setting an explicit tile size.

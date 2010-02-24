@@ -3,7 +3,7 @@
 	import flash.geom.Rectangle;
 
 	/**
-	 * Use for specifying advanced rendering options for the Image class.
+	 * Used to specify advanced rendering options for the Image class.
 	 * 
 	 * @see Image.draw
 	 * @see Image.drawSub

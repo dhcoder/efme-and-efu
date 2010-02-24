@@ -1,17 +1,14 @@
-﻿package efme.game.elements 
+﻿package efme.game.efnodes 
 {
 	/**
 	 * ...
 	 * @author Dherman
 	 */
-	public class TextArea
+	public class EfnTextArea
 	{
-		
-		public function TextArea() 
+		public function EfnTextArea() 
 		{
-			
 		}
-		
 	}
 
 }
