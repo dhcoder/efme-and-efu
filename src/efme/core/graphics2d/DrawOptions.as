@@ -94,7 +94,7 @@
 			alpha = 1.0;
 			
 			rotate = 0.0;
-			rotateAnchor = AnchorStyle.MIDDLE;
+			rotateAnchor = Anchor.MIDDLE;
 			
 			applySmoothing = false;
 			
@@ -117,7 +117,7 @@
 				blendColor == 0xFFFFFF &&
 				alpha == 1.0 &&
 				rotate == 0.0 &&
-				rotateAnchor == AnchorStyle.MIDDLE &&
+				rotateAnchor == Anchor.MIDDLE &&
 				applySmoothing == false);
 		}
 		

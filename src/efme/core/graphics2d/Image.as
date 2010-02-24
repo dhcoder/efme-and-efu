@@ -134,10 +134,13 @@
 		 */
 		public function drawTile(screen:Screen, tileX:uint, tileY:uint, destPoint:Point, drawOptions:DrawOptions = null):void
 		{
-			// TODO: Error if tileWidth or tileHeight is 0
 			if (_tileWidth > 0 && _tileHeight > 0)
 			{
 				drawInternal(screen, new Rectangle(tileX * _tileWidth, tileY * _tileHeight, _tileWidth, _tileHeight), destPoint, drawOptions);
+			}
+			else
+			{
+				throw new Error("Calling drawTile on untiled image.");
 			}
 		}
 
@@ -230,7 +233,7 @@
 					if (drawOptions.rotate != 0.0)
 					{
 						// TODO: Get this point based on anchor information
-						var anchorPoint:Point = AnchorStyle.getAnchorPoint(bitmapDataFinal.rect, drawOptions.rotateAnchor);
+						var anchorPoint:Point = Anchor.getAnchorPoint(bitmapDataFinal.rect, drawOptions.rotateAnchor);
 						matrix.translate(-anchorPoint.x, -anchorPoint.y);
 						matrix.rotate(drawOptions.rotate * DEG_TO_RAD)
 						matrix.translate(anchorPoint.x, anchorPoint.y);

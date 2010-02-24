@@ -5,10 +5,15 @@
 	
 	/**
 	 * An class to handle anchoring positions. Given a rectangle and an
-	 * anchoring style, you should be able to get the associated point
-	 * on the rectangle.
+	 * anchoring style, you can get the corresponding point on the rectangle.
+	 * 
+	 * TL------T------TR
+	 * |               |
+	 * L       M       R
+	 * |               |
+	 * BL------B------BR
 	 */
-	public class AnchorStyle
+	public class Anchor
 	{
 		public static const TOP_LEFT: uint = 0;
 		public static const TOP_MIDDLE: uint = 1;
