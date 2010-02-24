@@ -1,10 +1,11 @@
 ﻿package efme.examples
 {
-	import efme.core.graphics2d.AnchorStyle;
+	import efme.core.graphics2d.Anchor;
 	import efme.core.graphics2d.DrawOptions;
-	import efme.GameEngine;
 	import efme.core.graphics2d.Image;
 	import efme.core.support.Assets;
+	import efme.GameEngine;
+
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.geom.Point;
@@ -40,9 +41,7 @@
 		{
 			super(640, 480);
 			start();
-
-			var assets:Assets = new Assets();
-			
+		
 			_image1 = new Image();
 			_image2 = new Image(128, 128);
 			
@@ -52,8 +51,6 @@
 			_timer = new Timer(40);
 			_timer.addEventListener(TimerEvent.TIMER, handleTimer);
 			_timer.start();
-			
-			services.register(Assets, _image1);
 		}
 		
 		private function handleTimer(event:TimerEvent):void

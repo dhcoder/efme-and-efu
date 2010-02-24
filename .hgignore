@@ -7,3 +7,5 @@ syntax: glob
 *.orig
 [Oo]bj/
 [Dd]oc/
+glob:bin/index.html
+glob:bin/js/swfobject.js

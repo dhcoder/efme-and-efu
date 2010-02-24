@@ -1,14 +1,21 @@
-﻿- Image flipping, rotating
-- Text
-- Sounds
+﻿
 - Input
-- Elements + GameState/update(elapsedTime)/render(RenderState)
+- GameState/update(elapsedTime)/render(RenderState)
+- EfNode + EfnGroup + EfnSprite
+- Text + EfnTextArea
+- Sound + Music
 
 LATER
 
-- Assets support embedded images, sounds, music
-- Error handling
-
+- Assets support 
+  _X_ dynamic images
+  ___ dynamic sound
+  ___ dynamic music
+  ___ embedded images
+  ___ embedded sounds
+  ___ embedded music
+  ___ test cache
+  
 I already have basic image rendering working, and I need to polish that, then get text, sounds, and input up and running next. 
 
 IF/WHEN DOCUMENTING EFME FOR THE PUBLIC...

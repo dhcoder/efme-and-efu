@@ -49,9 +49,14 @@
 		 */
 		public function register(classType:Class, obj:Object):void
 		{
-			// TODO: Error if obj is not derived from class
-			
-			_dictServices[classType] = obj;
+			if (obj is classType)
+			{
+				_dictServices[classType] = obj;
+			}
+			else
+			{
+				throw new Error("Tried registering service of type " + obj + " which is not an instance of class type " + classType);
+			}
 		}
 		
 		/**

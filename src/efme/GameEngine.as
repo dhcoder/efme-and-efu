@@ -50,10 +50,14 @@
 		 */
 		public function GameEngine(width:uint, height:uint, clearColor:uint = 0x000000, scale:Number = 1.0):void
 		{
+			// TODO: Use scale!
 			_screen = new Screen(this, width, height, clearColor);
 			
 			_assets = new Assets();
 			_services = new Services();
+			
+			_keyboard = null; // Initialized after the stage is created
+			_mouse = null;    // ..
 		}
 
 		/**
@@ -95,6 +99,9 @@
 			
 			stage.frameRate = 60;
 			
+			_keyboard = new Keyboard(stage);
+			_mouse = new Mouse(stage);
+			
 			_frameTimer = new Timer(4);
 			_frameTimer.addEventListener(TimerEvent.TIMER, handleFrameTick);
 			_frameTimer.start();
@@ -102,9 +109,9 @@
 		
 		private function handleFrameTick(e:TimerEvent):void
 		{
-			// TODO: Remove this return;
+			// TODO: Remove this return; this happens once game objects are put into place
 			return;
-			
+
 			_screen.beginDraw();
 			_screen.clear();
 			_screen.endDraw();
