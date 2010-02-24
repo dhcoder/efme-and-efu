@@ -1,6 +1,9 @@
 ﻿package efme
 {
+	import efme.core.input.Keyboard;
+	import efme.core.input.Mouse;
 	import efme.core.support.Assets;
+	import efme.core.support.Services;
 	import flash.display.StageAlign;
 	import flash.display.StageQuality;
 	import flash.display.StageScaleMode;
@@ -36,7 +39,7 @@
 	 * }
 	 * </listing>
 	 */
-	public class Engine extends Sprite
+	public class GameEngine extends Sprite
 	{
 		/**
 		 * Construct an EFME engine with your desired appearance settings.
@@ -45,15 +48,28 @@
 		 * @param height The desired height of your display screen.
 		 * @param clearColor The background color (hex code) of your display screen (default = Black)
 		 */
-		public function Engine(width:uint, height:uint, clearColor:uint = 0x000000, scale:Number = 1.0):void
+		public function GameEngine(width:uint, height:uint, clearColor:uint = 0x000000, scale:Number = 1.0):void
 		{
 			_screen = new Screen(this, width, height, clearColor);
+			
+			_assets = new Assets();
+			_services = new Services();
 		}
 
 		/**
 		 *  Provide access to the target screen.
 		 */
 		public function get screen():Screen	{ return _screen; }
+
+		/**
+		 * Provide access to this game's asset manager.
+		 */
+		public function get assets():Assets { return _assets; }
+		
+		/**
+		 * Provide access to this game's global services.
+		 */
+		public function get services():Services { return _services; }
 		
 		
 		/**
@@ -97,6 +113,10 @@
 		private var _screen:Screen;
 		private var _frameTimer:Timer;
 		
+		private var _keyboard:Keyboard;
+		private var _mouse:Mouse;
+		
 		private var _assets:Assets;
+		private var _services:Services;
 	}
 }

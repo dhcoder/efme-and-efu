@@ -1,6 +1,6 @@
 ﻿package efme.examples
 {
-	import efme.Engine;
+	import efme.GameEngine;
 	
 	[SWF(width=640, height=480)]
 	/**
@@ -9,7 +9,7 @@
 	 * A bare-bones, "Hello, world!" example, which sets up an empty
 	 * Flash application at 640x480, with a green background color.
 	 */
-	public class Ex01_GettingStarted extends Engine
+	public class Ex01_GettingStarted extends GameEngine
 	{
 		public function Ex01_GettingStarted()
 		{

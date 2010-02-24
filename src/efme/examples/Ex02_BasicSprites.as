@@ -2,7 +2,7 @@
 {
 	import efme.core.graphics2d.AnchorStyle;
 	import efme.core.graphics2d.DrawOptions;
-	import efme.Engine;
+	import efme.GameEngine;
 	import efme.core.graphics2d.Image;
 	import efme.core.support.Assets;
 	import flash.events.Event;
@@ -29,7 +29,7 @@
 	 * A showcase of the most common features used when drawing sprites. This
 	 * includes loading an image, drawing it, and animating it.
 	 */
-	public class Ex02_BasicSprites extends Engine
+	public class Ex02_BasicSprites extends GameEngine
 	{
 		private var _timer:Timer;
 
@@ -52,15 +52,12 @@
 			_timer = new Timer(40);
 			_timer.addEventListener(TimerEvent.TIMER, handleTimer);
 			_timer.start();
+			
+			services.register(Assets, _image1);
 		}
 		
 		private function handleTimer(event:TimerEvent):void
 		{
-			if (_image1.bitmapData == null || _image2.bitmapData == null)
-			{
-				return;
-			}
-
 			screen.beginDraw();
 			screen.clear();
 			
@@ -75,6 +72,7 @@
 
 			//drawOptions.alpha = (_timer.currentCount % 70) / 100.0 + .3;
 			_image2.drawTile(screen, tileX, 0, new Point(128, 128), drawOptions);
+			_image2.drawTile(screen, tileX, 0, new Point(256, 128), drawOptions);
 
 			/*
 			
