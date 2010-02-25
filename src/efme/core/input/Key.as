@@ -97,7 +97,7 @@
 		public static const NUMPAD_ENTER:int = 108;
 		public static const NUMPAD_MULTIPLY:int = 106;
 		public static const NUMPAD_SUBTRACT:int = 109;
-		
+
 		/**
 		 * Returns the name of the key (a string).
 		 * 

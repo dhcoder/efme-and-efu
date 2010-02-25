@@ -47,6 +47,22 @@
 		}
 
 		/**
+		 * The rendering anchor used when drawing all images.
+		 * 
+		 * <p> When drawing images at (X, Y), this value specifies which anchor
+		 * point to attach there. 
+		 * 
+		 * <p> Common values for this are <code>Anchor.TOP_LEFT</code>
+		 * (image drawn from its the top-left corner at X/Y) and 
+		 * <code>Anchor.MIDDLE</code> (image centered around X/Y).
+		 * 
+		 * @default Anchor.TOP_LEFT
+		 */
+		public static function get renderAnchor():int { return _renderAnchor; }
+		public static function set renderAnchor(value:int):void { _renderAnchor = value; }
+
+		
+		/**
 		 * The height of the image.
 		 */
 		public function get height():uint { return (_bitmapData != null ? _bitmapData.height : 0); }
@@ -93,7 +109,6 @@
 		public function get bitmapData():BitmapData { return _bitmapData; }
 		public function set bitmapData(value:BitmapData):void { _bitmapData = value; }
 
-		
 		/**
 		 * Draw this image onto the screen in its entirety.
 		 * 
@@ -279,6 +294,13 @@
 		 * (Flash's unit of preference);
 		 */
 		private const DEG_TO_RAD:Number = Math.PI / 180.0;
+
+		/**
+		 * Render anchor, option global for all images. As far as I understand
+		 * it, this is a render preference, rather than an option people would
+		 * set per draw call.
+		 */
+		private static var _renderAnchor:int = Anchor.TOP_LEFT;
 		
 		/**
 		 * The bitmap data that our image will render

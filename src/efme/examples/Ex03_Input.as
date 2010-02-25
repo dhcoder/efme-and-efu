@@ -15,6 +15,7 @@
 		public function Ex03_Input() 
 		{
 			super(640, 480);
+			start();
 		}
 		
 		override protected function onInit():void 
@@ -24,13 +25,35 @@
 			keyboard.associateAction(UserActions.MOVE_LEFT, Key.LEFT);
 			keyboard.associateAction(UserActions.MOVE_RIGHT, Key.RIGHT);
 			keyboard.associateAction(UserActions.SHOOT, Key.SPACE);
+			
+			keyboard.addActionFiredHandler(UserActions.SHOOT, handleShoot);
+			
+			keyboard.addActionStateHandler(UserActions.MOVE_LEFT, handleMove);
+			keyboard.addActionStateHandler(UserActions.MOVE_RIGHT, handleMove);
 		}
 		
-		override protected function onUpdate(elapsedTime:Number):void 
+		private function handleShoot(action:int):void
 		{
-			super.onUpdate(elapsedTime);
-			
-			
+			trace("BANG!", keyboard.getActionKeyHeldTime(action));
+		}
+		
+		private function handleMove(action:int, actionEngaged:Boolean):void
+		{
+			if (actionEngaged)
+			{
+				if (action == UserActions.MOVE_LEFT)
+				{
+					trace("Moving left...");
+				}
+				else
+				{
+					trace("Moving right...");
+				}
+			}
+			else
+			{
+				trace("Stopped");
+			}
 		}
 	}
 

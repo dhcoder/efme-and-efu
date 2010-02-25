@@ -11,6 +11,7 @@
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.utils.getTimer;
 	import flash.utils.Timer;
 
 	import efme.core.graphics2d.Screen;
@@ -44,17 +45,25 @@
 		 * @param width The desired width of your display screen.
 		 * @param height The desired height of your display screen.
 		 * @param clearColor The background color (hex code) of your display screen (default = Black)
+		 * @param scale The amount to scale your game. Use this to give your game a more retro-pixelated look. (default = 1.0)
+		 * @param desiredFps The target frames-per-second you want your game to run at. Set to 0 to run as fast as possible. (default=60)
 		 */
-		public function GameEngine(width:uint, height:uint, clearColor:uint = 0x000000, scale:Number = 1.0):void
+		public function GameEngine(width:uint, height:uint, clearColor:uint = 0x000000, scale:Number = 1.0, desiredFps:uint=60):void
 		{
-			// TODO: Use scale!
-			_screen = new Screen(this, width, height, clearColor);
+			_screen = new Screen(this, width, height, clearColor, scale);
 			
 			_assets = new Assets();
 			_services = new Services();
 			
-			_keyboard = null; // Initialized after the stage is created
-			_mouse = null;    // ..
+			// TODO: Test FPS
+			_desiredFps = desiredFps;
+			_actualFps = _desiredFps;
+			
+			_date = new Date();
+			
+			// Members to be initialized after the stage is created.
+			_keyboard = null;
+			_mouse = null;
 		}
 
 		/**
@@ -105,8 +114,36 @@
 		/**
 		 * Override in a derived class. This is a good place to update some
 		 * game-wide system you may have that needs to call update itself.
+		 * 
+		 * @param elapsedTime Time (in ms) passed since the last update call.
 		 */
-		protected function onUpdate(elapsedTime:Number):void
+		protected function onUpdate(elapsedTime:int):void
+		{
+		}
+		
+		/**
+		 * Override in a derived class. This function gives you a chance to
+		 * render to the screen before anything else.
+		 * 
+		 * <p>Usually, most/all rendering should take place in your 
+		 * <code>EfNode</code> or <code>GameState</code> classes, but this
+		 * hook-point is still provided if you want to render something that
+		 * is globally behind every screen in your game.
+		 */
+		protected function onRenderBackground():void
+		{
+		}
+
+		/**
+		 * Override in a derived class. This function gives you a chance to
+		 * render to the screen after everything else.
+		 * 
+		 * <p>Usually, most/all rendering should take place in your 
+		 * <code>EfNode</code> or <code>GameState</code> classes, but this
+		 * hook-point is still provided if you want to render something that
+		 * is globally in front of every screen in your game.
+		 */
+		protected function onRenderForeground():void
 		{
 		}
 
@@ -123,24 +160,64 @@
 			
 			_keyboard = new Keyboard(stage);
 			_mouse = new Mouse(stage);
-			
-			_frameTimer = new Timer(4);
-			_frameTimer.addEventListener(TimerEvent.TIMER, handleFrameTick);
-			_frameTimer.start();
-			
+
+			_prevFrameTime = flash.utils.getTimer();
+
 			onInit();
+
+			// We're initialized. Kick-off the update timer!
+			_frameTimer = new Timer(1000 / MAX_FPS);
+			_frameTimer.addEventListener(TimerEvent.TIMER, handleUpdateTick);
+
+			_renderTimer = new Timer(1000 / _desiredFps);
+			_renderTimer.addEventListener(TimerEvent.TIMER, handleRenderTick);
+			
+			_frameTimer.start();
+			_renderTimer.start();
+		}
+
+		/**
+		 * The update heartbeat of EFME. This tick handler is set up to be
+		 * called "MAX_FPS" times every second.
+		 * 
+		 * <p> If the game starts to fall behind the desired FPS, we
+		 * pause rendering until we catch up.
+		 */
+		private function handleUpdateTick(e:TimerEvent):void
+		{
+			var currFrameTime:int = flash.utils.getTimer();
+			var elapsedTime:int = currFrameTime - _prevFrameTime;
+			_prevFrameTime = currFrameTime;
+
+			onUpdate(elapsedTime); 
+			keyboard.update(elapsedTime);
 		}
 		
-		private function handleFrameTick(e:TimerEvent):void
+		/**
+		 * The render heartbeat of EFME. This tick handler is set up to be
+		 * called "_desiredFps" times every second.
+		 */
+		private function handleRenderTick(e:TimerEvent):void
 		{
 			_screen.beginDraw();
 			_screen.clear();
-			onUpdate(1.0); // TODO: Real timer value
+			onRenderBackground();
+			// render world
+			onRenderForeground();
 			_screen.endDraw();
 		}
-
+		
+		private static const MAX_FPS:uint = 200;
+		
 		private var _screen:Screen;
+		
+		private var _desiredFps:uint;
+		private var _actualFps:uint;
 		private var _frameTimer:Timer;
+		private var _renderTimer:Timer;
+		
+		private var _date:Date; // Used to maintain our internal clock
+		private var _prevFrameTime:int; // milliseconds since this SWF started
 		
 		private var _keyboard:Keyboard;
 		private var _mouse:Mouse;

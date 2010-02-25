@@ -21,8 +21,10 @@
 	 */
 	public class Ex02_Sprites extends GameEngine
 	{
-		private var _image1:Image;
-		private var _image2:Image;
+		private var _imageCatAnim:Image;
+		
+		private var _animRate:int;
+		private var _tileX:uint;
 
 		public function Ex02_Sprites()
 		{
@@ -34,30 +36,40 @@
 		{
 			super.onInit();
 			
-			_image1 = new Image();
-			_image2 = new Image(128, 128);
+			_imageCatAnim = new Image(128, 128);
+			_animRate = 0;
+			_tileX = 0;
 			
-			assets.requestImage("data/images/image_normal.png", _image1);
-			assets.requestImage("data/images/image_tiled.png", _image2);
+			assets.requestImage("data/images/image_tiled.png", _imageCatAnim);
 		}
 		
-		override protected function onUpdate(elapsedTime:Number):void 
+		override protected function onUpdate(elapsedTime:int):void 
 		{
-			super.onUpdate(elapsedTime);
+			_animRate += elapsedTime;
+			
+			if (_animRate > 100)
+			{
+				_animRate = 0;
+				_tileX = (_tileX + 1) % _imageCatAnim.numTilesX;
+			}
+		}
+		
+		override protected function onRenderBackground():void 
+		{
+			super.onRenderBackground();
 
 			var drawOptions:DrawOptions = new DrawOptions();
 //			drawOptions.rotate = (_timer.currentCount % 180) * 2;
 			//drawOptions.flipX = (_timer.currentCount % 360) > 180;
 
-			var rate:uint = 3;
-			var tileX:uint = 0;
 //			var tileX:uint = (_timer.currentCount % (_image2.numTilesX * rate)) / rate;
 
 			//_image2.drawTile(screen, tileX, 0, new Point(80, 80), drawOptions);
 
 			//drawOptions.alpha = (_timer.currentCount % 70) / 100.0 + .3;
-			_image2.drawTile(screen, tileX, 0, new Point(128, 128), drawOptions);
-			_image2.drawTile(screen, tileX, 0, new Point(256, 128), drawOptions);
+			_imageCatAnim.drawTile(screen, _tileX, 0, new Point(128, 128), drawOptions);
+			drawOptions.alpha = .5;
+			_imageCatAnim.drawTile(screen, (_tileX + 1) % _imageCatAnim.numTilesX, 0, new Point(128, 128), drawOptions);
 
 			/*
 			
