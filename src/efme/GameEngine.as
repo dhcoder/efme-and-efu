@@ -72,6 +72,15 @@
 		 */
 		public function get services():Services { return _services; }
 		
+		/**
+		 * Provide access to this game's keyboard state.
+		 */
+		public function get keyboard():Keyboard { return _keyboard; }
+
+		/**
+		 * Provide access to this game's mouse state.
+		 */
+		public function get mouse():Mouse { return _mouse; }
 		
 		/**
 		 * Call this function to start executing your game.
@@ -83,6 +92,22 @@
 		{
 			if (stage) init();
 			else addEventListener(Event.ADDED_TO_STAGE, init);
+		}
+
+		/**
+		 * Override in a derived class. This is a good place to initialize
+		 * anything that needs to exist over the lifetime of your whole game.
+		 */
+		protected function onInit():void
+		{
+		}
+		
+		/**
+		 * Override in a derived class. This is a good place to update some
+		 * game-wide system you may have that needs to call update itself.
+		 */
+		protected function onUpdate(elapsedTime:Number):void
+		{
 		}
 
 		private function init(e:Event = null):void 
@@ -102,15 +127,15 @@
 			_frameTimer = new Timer(4);
 			_frameTimer.addEventListener(TimerEvent.TIMER, handleFrameTick);
 			_frameTimer.start();
+			
+			onInit();
 		}
 		
 		private function handleFrameTick(e:TimerEvent):void
 		{
-			// TODO: Remove this return; this happens once game objects are put into place
-			return;
-
 			_screen.beginDraw();
 			_screen.clear();
+			onUpdate(1.0); // TODO: Real timer value
 			_screen.endDraw();
 		}
 

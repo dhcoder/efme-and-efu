@@ -1,7 +1,16 @@
 ﻿package efme.core.input 
 {
 	/**
-	 * A collection of all key codes 
+	 * A collection of all key codes.
+	 * 
+	 * <p> Use these key values when testing key states using the Keyboard
+	 * class.
+	 * 
+	 * @see Keyboard
+	 * 
+	 * @author Flashpunk (This code copied nearly verbatim from the FlashPunk library. Thanks guys!!)
+	 * 
+	 
 	 */
 	public class Key
 	{
@@ -92,91 +101,44 @@
 		
 		/**
 		 * Returns the name of the key (a string).
-		 * @param	char	The keyCode of the key.
+		 * 
+		 * @param keyCode The keycode for the key (one of the constants from this class)
 		 */
-		public static function toString(char:int):String
+		public static function toString(keyCode:int):String
 		{
-			if (char >= A && char <= Z) return String.fromCharCode(char);
-			if (char >= F1 && char <= F15) return "F" + String(char - 111);
-			if (char >= 96 && char <= 105) return "NUMPAD " + String(char - 96);
-			switch (char)
+			if (keyCode >= A && keyCode <= Z) return String.fromCharCode(keyCode);
+			if (keyCode >= F1 && keyCode <= F15) return "F" + String(keyCode - 111);
+			if (keyCode >= 96 && keyCode <= 105) return "NUMPAD " + String(keyCode - 96);
+			
+			switch (keyCode)
 			{
-				case LEFT:
-				return "LEFT";
+				case LEFT: return "LEFT";
+				case UP: return "UP";
+				case RIGHT: return "RIGHT";
+				case DOWN: return "DOWN";
+				case ENTER: return "ENTER";
+				case CONTROL: return "CONTROL";
+				case SPACE: return "SPACE";
+				case SHIFT: return "SHIFT";
+				case BACKSPACE: return "BACKSPACE";
+				case CAPS_LOCK: return "CAPS LOCK";
+				case DELETE: return "DELETE";
+				case END: return "END";
+				case ESCAPE: return "ESCAPE";
+				case HOME: return "HOME";
+				case INSERT: return "INSERT";
+				case TAB: return "TAB";
+				case PAGE_DOWN: return "PAGE DOWN";
+				case PAGE_UP: return "PAGE UP";
+				case NUMPAD_ADD: return "NUMPAD ADD";
+				case NUMPAD_DECIMAL: return "NUMPAD DECIMAL";
+				case NUMPAD_DIVIDE: return "NUMPAD DIVIDE";
+				case NUMPAD_ENTER: return "NUMPAD ENTER";
+				case NUMPAD_MULTIPLY: return "NUMPAD MULTIPLY";
+				case NUMPAD_SUBTRACT: return "NUMPAD SUBTRACT";
 				
-				case UP:
-				return "UP";
-				
-				case RIGHT:
-				return "RIGHT";
-				
-				case DOWN:
-				return "DOWN";
-				
-				case ENTER:
-				return "ENTER";
-				
-				case CONTROL:
-				return "CONTROL";
-				
-				case SPACE:
-				return "SPACE";
-				
-				case SHIFT:
-				return "SHIFT";
-				
-				case BACKSPACE:
-				return "BACKSPACE";
-				
-				case CAPS_LOCK:
-				return "CAPS LOCK";
-				
-				case DELETE:
-				return "DELETE";
-				
-				case END:
-				return "END";
-				
-				case ESCAPE: 	
-				return "ESCAPE";
-				
-				case HOME: 		
-				return "HOME";
-				
-				case INSERT: 	
-				return "INSERT";
-				
-				case TAB: 		
-				return "TAB";
-				
-				case PAGE_DOWN:
-				return "PAGE DOWN";
-				
-				case PAGE_UP: 	
-				return "PAGE UP";
-				
-				case NUMPAD_ADD:		
-				return "NUMPAD ADD";
-				
-				case NUMPAD_DECIMAL:	
-				return "NUMPAD DECIMAL";
-				
-				case NUMPAD_DIVIDE:		
-				return "NUMPAD DIVIDE";
-				
-				case NUMPAD_ENTER:		
-				return "NUMPAD ENTER";
-				
-				case NUMPAD_MULTIPLY:	
-				return "NUMPAD MULTIPLY";
-				
-				case NUMPAD_SUBTRACT:	
-				return "NUMPAD SUBTRACT";
-				
-				default:
-				return String.fromCharCode(char);
+				default: return String.fromCharCode(keyCode);
 			}
-			return String.fromCharCode(char);
 		}
 	}
 }
