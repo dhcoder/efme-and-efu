@@ -17,17 +17,17 @@
 	 */
 	public class Anchor
 	{
-		public static const TOP_LEFT: uint = 0;
-		public static const TOP_MIDDLE: uint = 1;
-		public static const TOP_RIGHT: uint = 2;
-		public static const LEFT: uint = 3;
-		public static const MIDDLE: uint = 4;
-		public static const RIGHT: uint = 5;
-		public static const BOTTOM_LEFT: uint = 6;
-		public static const BOTTOM_MIDDLE: uint = 7;
-		public static const BOTTOM_RIGHT: uint = 8;
+		public static const TOP_LEFT: int = 0;
+		public static const TOP_MIDDLE: int = 1;
+		public static const TOP_RIGHT: int = 2;
+		public static const LEFT: int = 3;
+		public static const MIDDLE: int = 4;
+		public static const RIGHT: int = 5;
+		public static const BOTTOM_LEFT: int = 6;
+		public static const BOTTOM_MIDDLE: int = 7;
+		public static const BOTTOM_RIGHT: int = 8;
 		
-		public static function getAnchorPoint(rect:Rectangle, anchorStyle:uint):Point
+		public static function getAnchorPoint(rect:Rectangle, anchorStyle:int):Point
 		{
 			var anchorPoint:Point = null;
 			switch (anchorStyle) 

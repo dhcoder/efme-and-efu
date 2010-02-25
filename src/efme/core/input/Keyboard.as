@@ -27,20 +27,35 @@
 	 * code flow more readable, as well as makes it easy to allow people to
 	 * reassign keypresses later.
 	 * 
-	 * <p> <strong>Note:</strong>Whoever is responsible for this class must call
-	 * <code>update(elapsedTime)</code> so it can update its internal state.
+	 * <p> <strong>Note:</strong> Whoever is responsible for this class must 
+	 * regularly call <code>update(elapsedTime)</code> so it can update its
+	 * internal state.
 	 * 
 	 * @example The initialization and use of the Keyboard in your game.
 	 * <listing version="3.0">
 	 * class MyGame extends GameEngine
 	 * {
-	 *   private static const ACTION_JUMP:String; // Best to put these in another
-	 *   private static const ACTION_DUCK:String; // .. class in a real application
+	 *   private static const ACTION_JUMP:int = 0; // Best to put these in a separate
+	 *   private static const ACTION_DUCK:int = 1; // class in a real application
+	 * 
+	 *   public function MyGame()
+	 *   {
+	 *     super(640, 480);
+	 *     start();
+	 *   }
 	 * 
 	 *   protected override function onInit():void
 	 *   {
 	 *     keyboard.associateAction(ACTION_JUMP, Key.SPACE);
 	 *     keyboard.associateAction(ACTION_DUCK, Key.DOWN);
+	 *   }
+	 * 
+	 *   protected override function onUpdate(elapsedTime:Number):void
+	 *   {
+	 *     if (keyboard.isActionKeyJustPressed(ACTION_JUMP)
+	 *       trace("Jump!");
+	 *     if (keyboard.isActionKeyJustPressed(ACTION_DUCK)
+	 *       trace("Duck!");
 	 *   }
 	 * }
 	 * </listing>
@@ -90,18 +105,21 @@
 		 * function with the same action will reassociate it to a new key,
 		 * releasing the previous binding.
 		 * 
-		 * <p> <strong>Note:</strong> <code>action</code> is just a
-		 * <code>String</code>. While you could just choose a string like
-		 * "jump" and use it all over your code, that's prone to making a late
-		 * night spelling error. It's recommended you create a
-		 * list of constants somewhere, like
+		 * <p> <strong>Note:</strong> <code>action</code> is just an
+		 * <code>int</code>. While you could just choose a number like
+		 * "42" and use it all over your code, that's prone to error. It's
+		 * recommended you create a list of constants somewhere in your project,
+		 * like
 		 * 
-		 * <p><code>public static const MY_ACTION:String;</code>
+		 * <pre>
+		 * public static const SOME_ACTION:int = 0;
+		 * public static const ANOTHER_ACTION:int = 1;
+		 * </pre>
 		 * 
 		 * @param action The action you want to register
 		 * @param keyCode The keycode you want to register.
 		 */
-		public function associateAction(action:String, keyCode:int):void
+		public function associateAction(action:int, keyCode:int):void
 		{
 			_dictActionToKey[action] = keyCode;
 			_dictKeyToAction[keyCode] = action;

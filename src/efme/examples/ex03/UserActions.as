@@ -13,9 +13,9 @@
 	 */
 	public class UserActions
 	{
-		public static const MOVE_RIGHT:String = "MOVE_RIGHT";
-		public static const MOVE_LEFT:String = "MOVE_RIGHT"; // TODO: Change to MOVE_LEFT
-		public static const SHOOT:String = "SHOOT";
+		public static const MOVE_RIGHT:int = 0;
+		public static const MOVE_LEFT:int = 1;
+		public static const SHOOT:int = 2;
 	}
 
 }

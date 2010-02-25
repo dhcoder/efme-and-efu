@@ -3,8 +3,7 @@
 	/**
 	 * A collection of all key codes.
 	 * 
-	 * <p> Use these key values when testing key states using the Keyboard
-	 * class.
+	 * <p> Use these key values when testing the state of the Keyboard class.
 	 * 
 	 * @see Keyboard
 	 * 

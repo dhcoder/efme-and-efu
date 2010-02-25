@@ -27,7 +27,7 @@
 		 * @param height The desired height of this display screen.
 		 * @param clearColor The background color (hex code) of your display screen (default = Black)
 		 */
-		public function Screen(engine:GameEngine, width:uint, height:uint, clearColor:uint):void
+		public function Screen(engine:GameEngine, width:uint, height:uint, clearColor:uint = 0x000000):void
 		{
 			_bitmap = new Bitmap(new BitmapData(width, height, false, clearColor));
 			_clearColor = clearColor;
