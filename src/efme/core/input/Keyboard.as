@@ -172,6 +172,8 @@
 		 * 
 		 * @param action The action we wish to register for
 		 * @param callback A function that takes an <code>int</code> and returns <code>void</code>
+		 * 
+ 		 * @see removeActionFiredHandler
 		 */
 		public function addActionFiredHandler(action:int, callback:Function):void
 		{
@@ -208,6 +210,8 @@
 		 * 
 		 * @param action The action we wish to register for
 		 * @param callback A function that takes an <code>int</code> and returns <code>void</code>
+		 * 
+		 * @see removeActionStateHandler
 		 */
 		public function addActionStateHandler(action:int, callback:Function):void
 		{
@@ -225,6 +229,63 @@
 			}
 		}
 
+		/**
+		 * Unregister an action callback that was registered with
+		 * <code>addActionFiredHandler(...)</code>
+		 * 
+		 * @return <code>true</code> if the remove was successful
+		 * 
+		 * @see addActionFiredHandler
+		 */
+		public function removeActionFiredHandler(action:int, callback:Function):Boolean
+		{
+			var actionFiredHandlers:Vector.<Function> = _dictActionFiredHandlers[action] as Vector.<Function>;
+			
+			if (actionFiredHandlers != null)
+			{
+				var index:int = actionFiredHandlers.indexOf(callback);
+				if (index >= 0)
+				{
+					actionFiredHandlers.splice(index, 1);
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
+		/**
+		 * Unregister an action callback that was registered with
+		 * <code>addActionStateHandler(...)</code>
+		 * 
+		 * @see addActionStateHandler
+		 */
+		public function removeActionStateHandler(action:int, callback:Function):Boolean
+		{
+			var actionStateHandlers:Vector.<Function> = _dictActionStateHandlers[action] as Vector.<Function>;
+			
+			if (actionStateHandlers != null)
+			{
+				var index:int = actionStateHandlers.indexOf(callback);
+				if (index >= 0)
+				{
+					actionStateHandlers.splice(index, 1);
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
+		/**
+		 * Remove ALL registered action handlers (of both the "action fired" and
+		 * "state changed" variety)
+		 */
+		public function removeAllHandlers():void
+		{
+			_dictActionFiredHandlers = new Dictionary();
+			_dictActionStateHandlers = new Dictionary();
+		}
 		
 		/**
 		 * Update the keyboard's internal state.
