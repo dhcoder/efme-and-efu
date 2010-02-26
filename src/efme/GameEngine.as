@@ -11,6 +11,7 @@
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.ui.ContextMenu;
 	import flash.utils.getTimer;
 	import flash.utils.Timer;
 
@@ -64,6 +65,12 @@
 			// Members to be initialized after the stage is created.
 			_keyboard = null;
 			_mouse = null;
+			
+			// TODO: Move this to a better place and expose ability to add
+			// new items to the list. Probably efme.support.ContextMenu?
+			var cleanContextMenu:ContextMenu = new ContextMenu();
+			cleanContextMenu.hideBuiltInItems();
+			contextMenu = cleanContextMenu;
 		}
 
 		/**
@@ -190,7 +197,9 @@
 			_prevFrameTime = currFrameTime;
 
 			onUpdate(elapsedTime); 
+			
 			keyboard.update(elapsedTime);
+			mouse.update(elapsedTime);
 		}
 		
 		/**
