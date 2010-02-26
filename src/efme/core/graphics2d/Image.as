@@ -32,21 +32,6 @@
 	public class Image
 	{
 		/**
-		 * Initialize your image. Specify a tile width and height if the image
-		 * is divided into a grid.
-		 * 
-		 * @param bitmapData
-		 * @param tileWidth
-		 * @param tileHeight
-		 */
-		public function Image(tileWidth:uint = 0, tileHeight:uint = 0, bitmapData:BitmapData = null)
-		{
-			_tileWidth = tileWidth;
-			_tileHeight = tileHeight;
-			_bitmapData = bitmapData;
-		}
-
-		/**
 		 * The rendering anchor used when drawing all images.
 		 * 
 		 * <p> When drawing images at (X, Y), this value specifies which anchor
@@ -61,7 +46,21 @@
 		public static function get renderAnchor():int { return _renderAnchor; }
 		public static function set renderAnchor(value:int):void { _renderAnchor = value; }
 
-		
+		/**
+		 * Initialize your image. Specify a tile width and height if the image
+		 * is divided into a grid.
+		 * 
+		 * @param bitmapData
+		 * @param tileWidth
+		 * @param tileHeight
+		 */
+		public function Image(tileWidth:uint = 0, tileHeight:uint = 0, bitmapData:BitmapData = null)
+		{
+			_tileWidth = tileWidth;
+			_tileHeight = tileHeight;
+			_bitmapData = bitmapData;
+		}
+
 		/**
 		 * The height of the image.
 		 */
