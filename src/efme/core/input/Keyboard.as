@@ -297,7 +297,7 @@
 		 * call this function AFTER you call update on all of your own
 		 * objects.
 		 * 
-		 * @param	elapsedTime
+		 * @param elapsedTime How much time has elapsed (in ms) since the last call to update.
 		 */
 		public function update(elapsedTime:int):void
 		{
