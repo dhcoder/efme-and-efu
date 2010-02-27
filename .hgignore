@@ -1,0 +1,11 @@
+# Ignore file for working with Flash 10 and FlashDevelop
+
+# use glob syntax
+syntax: glob
+
+*.swf
+*.orig
+[Oo]bj/
+[Dd]oc/
+glob:bin/index.html
+glob:bin/js/swfobject.js

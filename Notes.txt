@@ -1,0 +1,24 @@
+﻿
+- Input
+- GameState/update(elapsedTime)/render(RenderState)
+- EfNode + EfnGroup + EfnSprite
+- Text + EfnTextArea
+- Sound + Music
+
+LATER
+
+- Assets support 
+  _X_ dynamic images
+  ___ dynamic sound
+  ___ dynamic music
+  ___ embedded images
+  ___ embedded sounds
+  ___ embedded music
+  ___ test cache
+  
+I already have basic image rendering working, and I need to polish that, then get text, sounds, and input up and running next. 
+
+IF/WHEN DOCUMENTING EFME FOR THE PUBLIC...
+
+Set use-network to false when working locally. I have to figure out security settings...
+Review documentation, leave nothing left uncommented, *sigh*
