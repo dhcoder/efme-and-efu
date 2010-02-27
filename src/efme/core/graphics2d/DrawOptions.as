@@ -53,12 +53,12 @@
 		 * Number (in degrees) that you want to rotate your image.
 		 * (Default = 0.0)
 		 */
-		public var rotate:Number;
+		public var rotation:Number;
 		
 		/**
 		 * Anchor-point to rotate around.
 		 */
-		public var rotateAnchor:uint;
+		public var rotationAnchor:uint;
 
 		/**
 		 * Whether or not you want to apply smoothing to your image. Smoothing
@@ -93,8 +93,8 @@
 			blendColor = 0xFFFFFF;
 			alpha = 1.0;
 			
-			rotate = 0.0;
-			rotateAnchor = Anchor.MIDDLE;
+			rotation = 0.0;
+			rotationAnchor = Anchor.MIDDLE;
 			
 			applySmoothing = false;
 			
@@ -116,8 +116,8 @@
 				flipY == false &&
 				blendColor == 0xFFFFFF &&
 				alpha == 1.0 &&
-				rotate == 0.0 &&
-				rotateAnchor == Anchor.MIDDLE &&
+				rotation == 0.0 &&
+				rotationAnchor == Anchor.MIDDLE &&
 				applySmoothing == false);
 		}
 		
@@ -139,8 +139,8 @@
 			drawOptionsClone.blendColor = blendColor;
 			drawOptionsClone.alpha = alpha;
 			
-			drawOptionsClone.rotate = rotate;
-			drawOptionsClone.rotateAnchor = rotateAnchor;
+			drawOptionsClone.rotation = rotation;
+			drawOptionsClone.rotationAnchor = rotationAnchor;
 			
 			drawOptionsClone.applySmoothing = applySmoothing;
 			

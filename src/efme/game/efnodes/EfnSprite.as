@@ -1,12 +1,10 @@
 ﻿package efme.game.efnodes 
 {
 	/**
-	 * ...
-	 * @author Dherman
+	 * An EfNode for rendering images and animations on the screen.
 	 */
-	public class EfnSprite
+	public class EfnSprite extends EfNode
 	{
-		
 		public function EfnSprite() 
 		{
 			
