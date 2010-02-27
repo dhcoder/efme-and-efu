@@ -13,7 +13,7 @@
 	 * - Utilizing GameEngine.services
 	 * - Using efme.core without creating EfNodes.
 	 */
-	public class Ex99_MiscFeatures extends GameEngine
+	public class Ex04_MiscFeatures extends GameEngine
 	{
 		public function Ex99_MiscFeatures() 
 		{

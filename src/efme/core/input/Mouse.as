@@ -82,7 +82,15 @@
 		public function update(elapsedTime:int):void
 		{
 			_buttonDownPrev = _buttonDownCurr;
-			_buttonHeldTime += elapsedTime;
+			
+			if (_buttonDownCurr)
+			{
+				_buttonHeldTime += elapsedTime;
+			}
+			else
+			{
+				_buttonHeldTime = 0;
+			}
 		}
 
 		/**
@@ -140,7 +148,6 @@
 		private function handleMouseUp(e:MouseEvent):void 
 		{
 			_buttonDownCurr = false;
-			_buttonHeldTime = 0;
 		}
 
 		/**
