@@ -32,13 +32,13 @@
 	public class Image
 	{
 		/**
-		 * The rendering anchor used when drawing all images.
+		 * The rendering anchor used when drawing images.
 		 * 
-		 * <p> When drawing images at (X, Y), this value specifies which anchor
-		 * point to attach there. 
+		 * <p> When you make a call to draw an image at some (X, Y), the
+		 * image is drawn so that the anchor is at that point.
 		 * 
 		 * <p> Common values for this are <code>Anchor.TOP_LEFT</code>
-		 * (image drawn from its the top-left corner at X/Y) and 
+		 * (this is the common behavior of most 2D rendering libraries) and 
 		 * <code>Anchor.MIDDLE</code> (image centered around X/Y).
 		 * 
 		 * @default Anchor.TOP_LEFT
