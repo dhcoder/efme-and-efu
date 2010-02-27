@@ -13,9 +13,8 @@
 	 */
 	public class UserActions
 	{
-		public static const MOVE_RIGHT:int = 0;
-		public static const MOVE_LEFT:int = 1;
-		public static const SHOOT:int = 2;
+		public static const DUCK:int = 0;
+		public static const SHOOT:int = 1;
 	}
 
 }

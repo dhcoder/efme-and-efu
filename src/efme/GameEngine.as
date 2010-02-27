@@ -4,6 +4,7 @@
 	import efme.core.input.Mouse;
 	import efme.core.support.Assets;
 	import efme.core.support.Services;
+	import efme.game.GameState;
 	import flash.display.StageAlign;
 	import flash.display.StageQuality;
 	import flash.display.StageScaleMode;
@@ -60,8 +61,6 @@
 			_desiredFps = desiredFps;
 			_actualFps = _desiredFps;
 			
-			_date = new Date();
-			
 			// Members to be initialized after the stage is created.
 			_keyboard = null;
 			_mouse = null;
@@ -110,6 +109,21 @@
 			else addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 
+		/**
+		 * Set the next game state we're going to enter into.
+		 */
+		public function enterState(gameState:GameState):void
+		{
+			if (_gameState != null)
+			{
+				_gameStateNext = gameState;
+			}
+			else
+			{
+				_gameState = gameState;
+			}
+		}
+		
 		/**
 		 * Override in a derived class. This is a good place to initialize
 		 * anything that needs to exist over the lifetime of your whole game.
@@ -167,6 +181,8 @@
 			
 			_keyboard = new Keyboard(stage);
 			_mouse = new Mouse(stage);
+			
+			_gameState = null;
 
 			_prevFrameTime = flash.utils.getTimer();
 
@@ -196,7 +212,7 @@
 			var elapsedTime:int = currFrameTime - _prevFrameTime;
 			_prevFrameTime = currFrameTime;
 
-			onUpdate(elapsedTime); 
+			onUpdate(elapsedTime);
 			
 			keyboard.update(elapsedTime);
 			mouse.update(elapsedTime);
@@ -210,10 +226,27 @@
 		{
 			_screen.beginDraw();
 			_screen.clear();
+			
 			onRenderBackground();
-			// render world
+			
+			if (_gameState != null)
+			{
+				_gameState.render();
+			}
+			
 			onRenderForeground();
 			_screen.endDraw();
+
+			//
+			// Once finished rendering, check to see if we should go into a new
+			// game state.
+			//
+			
+			if (_gameStateNext != null)
+			{
+				_gameState.shutdown();
+				_gameState = _gameStateNext;
+			}
 		}
 		
 		private static const MAX_FPS:uint = 200;
@@ -225,7 +258,6 @@
 		private var _frameTimer:Timer;
 		private var _renderTimer:Timer;
 		
-		private var _date:Date; // Used to maintain our internal clock
 		private var _prevFrameTime:int; // milliseconds since this SWF started
 		
 		private var _keyboard:Keyboard;
@@ -233,5 +265,8 @@
 		
 		private var _assets:Assets;
 		private var _services:Services;
+		
+		private var _gameState:GameState;
+		private var _gameStateNext:GameState;
 	}
 }
