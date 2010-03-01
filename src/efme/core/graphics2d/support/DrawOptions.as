@@ -1,4 +1,4 @@
-﻿package efme.core.graphics2d 
+﻿package efme.core.graphics2d.support
 {
 	import flash.geom.Rectangle;
 

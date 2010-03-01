@@ -79,7 +79,7 @@
 		 * 
 		 * @param elapsedTime How much time has elapsed (in ms) since the last call to update.
 		 */
-		public function update(elapsedTime:int):void
+		public function update(elapsedTime:uint):void
 		{
 			_buttonDownPrev = _buttonDownCurr;
 			

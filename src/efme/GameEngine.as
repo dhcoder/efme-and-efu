@@ -12,6 +12,7 @@
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.system.System;
 	import flash.ui.ContextMenu;
 	import flash.utils.getTimer;
 	import flash.utils.Timer;
@@ -121,6 +122,7 @@
 			else
 			{
 				_gameState = gameState;
+				_gameState.handleEntered();
 			}
 		}
 		
@@ -138,7 +140,7 @@
 		 * 
 		 * @param elapsedTime Time (in ms) passed since the last update call.
 		 */
-		protected function onUpdate(elapsedTime:int):void
+		protected function onUpdate(elapsedTime:uint):void
 		{
 		}
 		
@@ -146,10 +148,13 @@
 		 * Override in a derived class. This function gives you a chance to
 		 * render to the screen before anything else.
 		 * 
-		 * <p>Usually, most/all rendering should take place in your 
-		 * <code>EfNode</code> or <code>GameState</code> classes, but this
+		 * <p><strong>Note:</strong> Usually, most/all rendering should take
+		 * place in your <code>GameState</code>'s <code>EfNode</code>s, but this
 		 * hook-point is still provided if you want to render something that
 		 * is globally behind every screen in your game.
+		 * 
+		 * @see efme.game.EfNode
+		 * @see efme.game.EfNode#onRender
 		 */
 		protected function onRenderBackground():void
 		{
@@ -159,10 +164,14 @@
 		 * Override in a derived class. This function gives you a chance to
 		 * render to the screen after everything else.
 		 * 
-		 * <p>Usually, most/all rendering should take place in your 
-		 * <code>EfNode</code> or <code>GameState</code> classes, but this
+		 * <p><strong>Note:</strong> Usually, most/all rendering should take
+		 * place in your <code>GameState</code>'s <code>EfNode</code>s, but this
 		 * hook-point is still provided if you want to render something that
-		 * is globally in front of every screen in your game.
+		 * is globally in front of every screen in your game. (Say, like an
+		 * FPS overlay)
+		 * 
+		 * @see efme.game.EfNode
+		 * @see efme.game.EfNode#onRender
 		 */
 		protected function onRenderForeground():void
 		{
@@ -188,42 +197,44 @@
 
 			onInit();
 
-			// We're initialized. Kick-off the update timer!
-			_frameTimer = new Timer(1000 / MAX_FPS);
-			_frameTimer.addEventListener(TimerEvent.TIMER, handleUpdateTick);
+			// We're initialized. Kick-off the game timer!
+			_gameTimer = new Timer(1000 / _desiredFps);
+			_gameTimer.addEventListener(TimerEvent.TIMER, handleGameTick);
 
-			_renderTimer = new Timer(1000 / _desiredFps);
-			_renderTimer.addEventListener(TimerEvent.TIMER, handleRenderTick);
-			
-			_frameTimer.start();
-			_renderTimer.start();
+			_gameTimer.start();
 		}
 
 		/**
-		 * The update heartbeat of EFME. This tick handler is set up to be
-		 * called "MAX_FPS" times every second.
+		 * The heartbeat of EFME. This tick handler is set up to be
+		 * called "_desiredFps" times every second.
 		 * 
 		 * <p> If the game starts to fall behind the desired FPS, we
 		 * pause rendering until we catch up.
 		 */
-		private function handleUpdateTick(e:TimerEvent):void
+		private function handleGameTick(e:TimerEvent):void
 		{
+			//
+			// Handle update
+			//
+ 			
 			var currFrameTime:int = flash.utils.getTimer();
-			var elapsedTime:int = currFrameTime - _prevFrameTime;
+			var elapsedTime:uint = currFrameTime - _prevFrameTime;
 			_prevFrameTime = currFrameTime;
 
 			onUpdate(elapsedTime);
 			
+			if (_gameState != null)
+			{
+				_gameState.update(elapsedTime);
+			}
+			
 			keyboard.update(elapsedTime);
 			mouse.update(elapsedTime);
-		}
-		
-		/**
-		 * The render heartbeat of EFME. This tick handler is set up to be
-		 * called "_desiredFps" times every second.
-		 */
-		private function handleRenderTick(e:TimerEvent):void
-		{
+
+			//
+			// Handle render
+			//
+			
 			_screen.beginDraw();
 			_screen.clear();
 			
@@ -238,15 +249,20 @@
 			_screen.endDraw();
 
 			//
-			// Once finished rendering, check to see if we should go into a new
-			// game state.
+			// Check if we should move to the next game state
 			//
 			
 			if (_gameStateNext != null)
 			{
-				_gameState.shutdown();
 				_gameState = _gameStateNext;
+				_gameState.handleEntered();
+				
+				_gameStateNext = null;
+				
+				System.gc();
+				System.gc();
 			}
+
 		}
 		
 		private static const MAX_FPS:uint = 200;
@@ -255,8 +271,7 @@
 		
 		private var _desiredFps:uint;
 		private var _actualFps:uint;
-		private var _frameTimer:Timer;
-		private var _renderTimer:Timer;
+		private var _gameTimer:Timer;
 		
 		private var _prevFrameTime:int; // milliseconds since this SWF started
 		
