@@ -54,7 +54,7 @@
 	 *     _shootTimer = 0;
 	 *   }
 	 * 
-	 *   protected override function onUpdate(elapsedTime:int)
+	 *   protected override function onUpdate(elapsedTime:uint)
 	 *   {
 	 *      if (keyboard.isActionKeyJustPressed(ACTION_SHOOT)
 	 *      {
@@ -157,7 +157,7 @@
 		 * 
 		 * @param elapsedTime How much time has elapsed (in ms) since the last call to update.
 		 */
-		public function update(elapsedTime:int):void
+		public function update(elapsedTime:uint):void
 		{
 			var key:Object;
 			

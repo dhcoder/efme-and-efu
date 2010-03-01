@@ -1,5 +1,8 @@
 ﻿package efme.core.graphics2d 
 {
+	import efme.core.graphics2d.Screen;
+	import efme.core.graphics2d.support.Anchor;
+	import efme.core.graphics2d.support.DrawOptions;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
@@ -8,7 +11,6 @@
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import efme.core.graphics2d.Screen;
 	
 	/**
 	 * A class which references image data and can render it.

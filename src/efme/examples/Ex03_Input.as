@@ -24,17 +24,13 @@
 		
 		override protected function onInit():void 
 		{
-			super.onInit();
-			
 			// Associate keyboard actions
 			keyboard.associateAction(UserActions.DUCK, Key.DOWN);
 			keyboard.associateAction(UserActions.SHOOT, Key.SPACE);
 		}
 		
-		override protected function onUpdate(elapsedTime:int):void 
+		override protected function onUpdate(elapsedTime:uint):void 
 		{
-			super.onUpdate(elapsedTime);
-
 			//
 			// Testing the mouse state
 			//
