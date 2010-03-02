@@ -98,6 +98,16 @@
 			_dictImageToFilename = new Dictionary();
 			
 			_dictCachedBitmaps = new Dictionary(true);
+			
+			_numItemsLoading = 0;
+		}
+		
+		/**
+		 * Function to check if anything is in the process of loading.
+		 */
+		public function isLoading():Boolean
+		{
+			return _numItemsLoading > 0;
 		}
 		
 		/**
@@ -137,6 +147,7 @@
 				
 				var request:URLRequest = new URLRequest(strFileLower);
 				loader.load(request);
+				++_numItemsLoading;
 			}
 		}
 
@@ -156,22 +167,26 @@
 			image.bitmapData = bitmapData;
 			_dictCachedBitmaps[strFile] = image.bitmapData;
 			
-			cleanImageDictionaries(event.target as LoaderInfo);
+			handleLoadImageFinished(event.target as LoaderInfo);
 		}
 
 		private function handleLoadImageFailed(event:IOErrorEvent):void
 		{
-			cleanImageDictionaries(event.target as LoaderInfo);
+			handleLoadImageFinished(event.target as LoaderInfo);
 		}
 		
-		private function cleanImageDictionaries(loaderInfo:LoaderInfo):void
+		private function handleLoadImageFinished(loaderInfo:LoaderInfo):void
 		{
 			var image:Image = _dictLoaderToImage[loaderInfo] as Image;
 			delete _dictLoaderToImage[loaderInfo];
 			delete _dictImageToLoader[image];
 			delete _dictImageToFilename[image];
+			
+			--_numItemsLoading;
 		}
 
+		private var _numItemsLoading:uint;
+		
 		private var _dictLoaderToImage:Dictionary;
 		private var _dictImageToLoader:Dictionary;
 		private var _dictImageToFilename:Dictionary;

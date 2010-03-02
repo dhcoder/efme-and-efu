@@ -1,5 +1,6 @@
 ﻿package efme.game
 {
+	import efme.core.graphics2d.Image;
 	import efme.core.graphics2d.support.Anchor;
 	import efme.core.graphics2d.support.DrawOptions;
 	import efme.game.efnodes.EfnGroup;
@@ -152,18 +153,40 @@
 			{
 				onUpdate(offset, elapsedTime);
 				_modified = false;
+				
+				if (_childNodes != null)
+				{
+					offset.x += _rectArea.x;
+					offset.y += _rectArea.y;
+
+					_childNodes.update(offset, elapsedTime);
+
+					offset.x -= _rectArea.x;
+					offset.y -= _rectArea.y;
+				}
 			}
 		}
 		
 		/**
 		 * Render this EfNode. This call will be ignored if the node is not
-		 * active.
+		 * active or if it is totally transparent.
 		 */
 		final public function render():void
 		{
-			if (_active)
+			if (_active && alpha > 0.0)
 			{
 				onRender();
+				
+				if (_childNodes != null)
+				{
+					Image.pushOffset(new Point(x, y));
+					Image.pushColor(drawOptions.blendColor, drawOptions.alpha);
+					
+					_childNodes.render();
+
+					Image.popOffset();
+					Image.popColor();
+				}
 			}
 		}
 		
@@ -203,13 +226,20 @@
 		 */
 		protected function get drawOptions():DrawOptions { return _drawOptions; }
 
+		/**
+		 * Provide protected access to this node's children. This value can be
+		 * <code>null</code> if this <code>EfNode</code> was constructed with
+		 * <code>hasChildren = false</code>.
+		 */
+		protected function get childNodes():EfNodeList { return _childNodes; }
+
 		private var _parentState:GameState;
 		
 		private var _active:Boolean;
 		private var _rectArea:Rectangle;
 		private var _drawOptions:DrawOptions;
-		private var _childNodes:EfNodeList;
 		private var _modified:Boolean;
-	}
 
+		private var _childNodes:EfNodeList;
+	}
 }

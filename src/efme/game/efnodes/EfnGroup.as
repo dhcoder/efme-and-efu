@@ -2,20 +2,23 @@
 {
 	import efme.game.EfNode;
 	import efme.game.EfNodeList;
+	import efme.game.GameState;
+	import flash.geom.Point;
 	
 	/**
 	 * An EfNode parent that contains a list of EfNode children.
 	 */
 	public class EfnGroup extends EfNode
 	{
-		public function EfnGroup(initialSize:uint = 0) 
+		public function EfnGroup(gameState:GameState) 
 		{
-			_children = new EfNodeList(initialSize);
+			super(gameState, true);
 		}
 		
-		public function get children():EfNodeList { return _children; }
-		
-		private var _children:EfNodeList;
+		/**
+		 * Provide access to this group's children.
+		 */
+		public function get children():EfNodeList { return childNodes; }
 	}
 
 }

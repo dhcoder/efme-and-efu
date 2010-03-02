@@ -10,13 +10,13 @@
 	 */
 	public class TilePosition
 	{
-		public var tileX:uint;
-		public var tileY:uint;
+		public var X:uint;
+		public var Y:uint;
 		
-		public function TilePosition(tileX:uint = 0, tileY:uint = 0)
+		public function TilePosition(X:uint = 0, Y:uint = 0)
 		{
-			this.tileX = tileX;
-			this.tileY = tileY;
+			this.X = X;
+			this.Y = Y;
 		}
 	}
 }

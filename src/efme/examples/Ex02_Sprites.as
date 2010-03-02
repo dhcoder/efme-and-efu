@@ -9,6 +9,13 @@
 	 * 
 	 * A showcase of the most common features used when drawing sprites. This
 	 * includes loading an image, drawing it, and animating it.
+	 * 
+	 * The classes you'll use in this demo.
+	 * 
+	 * - EfnSprite
+	 * - Image
+	 * - GameEngine (introduced in Ex. 01)
+	 * - GameState
 	 */
 	public class Ex02_Sprites extends GameEngine
 	{
