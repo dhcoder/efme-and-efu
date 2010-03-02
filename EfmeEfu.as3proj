@@ -64,7 +64,7 @@
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <compile path="src\efme\examples\Ex02_Sprites.as" />
+    <compile path="src\efme\examples\Ex02_SpritesAndText.as" />
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
