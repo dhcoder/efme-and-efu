@@ -1,5 +1,6 @@
 ﻿package efme.game 
 {
+	import efme.core.graphics2d.Image;
 	import efme.GameEngine;
 	import flash.geom.Point;
 	/**
@@ -58,13 +59,13 @@
 		final public function update(elapsedTime:uint):void
 		{
 			onUpdate(elapsedTime); // Give the game-state a chance to handle the update
-			
-			// Update all EfNodes. Note that if our camera is set to 100x50,
-			// we actually want to offset our nodes to -100x-50, shifting
+
+			// Note that if our camera is set to 100x50,
+			// we actually want to offset our game to -100x-50, shifting
 			// the world up and left to give us the illusion that the camera
 			// moved down and right.
-			var inverseCamera:Point = new Point(-_camera.x, -_camera.y);
-			_efNodes.update(inverseCamera, elapsedTime);
+			var reverseCamera:Point = new Point(-_camera.x, -_camera.y);
+			_efNodes.update(reverseCamera, elapsedTime);
 		}
 		
 		/**
@@ -73,7 +74,9 @@
 		final public function render():void
 		{
 			onRenderBackground();
+			Image.pushOffset(new Point(-_camera.x, -_camera.y));
 			_efNodes.render();
+			Image.popOffset();
 			onRenderForeground();
 		}
 		
@@ -131,6 +134,7 @@
 		private var _gameEngine:GameEngine;
 		
 		private var _camera:Point;
+		private var _reverseCamera:Point; // Updated at the beginning of each update loop
 		private var _efNodes:EfNodeList;
 	}
 

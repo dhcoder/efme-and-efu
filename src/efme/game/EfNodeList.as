@@ -17,16 +17,15 @@
 		 * nodes than this size, it will automatically expand. If set to 0,
 		 * a reasonable default will be used. (Default = 0)
 		 */
-		public function EfNodeList(initialSize:uint = 0) 
+		public function EfNodeList() 
 		{
-			_initialSize = initialSize;
 			clear();
 		}
 		
 		/**
 		 * The number of EfNodes in this list.
 		 */
-		public function get numItems():uint { return _numItems; }
+		public function get numItems():uint { return _items.length; }
 		
 		/**
 		 * Return the node at the specified index.
@@ -56,7 +55,6 @@
 		public function add(efNode:EfNode):void
 		{
 			_items.push(efNode);
-			++_numItems;
 		}
 		
 		/**
@@ -67,7 +65,6 @@
 			for (var nNodeAdd:int = 0; nNodeAdd < efNodes.length; ++nNodeAdd)
 			{
 				_items.push(efNodes[nNodeAdd]);
-				++_numItems;
 			}
 		}
 		
@@ -77,10 +74,9 @@
 		 */
 		public function addList(efNodeList:EfNodeList):void
 		{
-			for (var nNodeAdd:int = 0; nNodeAdd < efNodeList._numItems; ++nNodeAdd)
+			for (var nNodeAdd:int = 0; nNodeAdd < efNodeList._items.length; ++nNodeAdd)
 			{
 				_items.push(efNodeList._items[nNodeAdd]);
-				++_numItems;
 			}
 		}
 		
@@ -101,7 +97,6 @@
 			if (nNodeRemove >= 0)
 			{
 				_items.splice(nNodeRemove, 1);
-				--_numItems;
 				return true;
 			}
 			else
@@ -116,7 +111,6 @@
 		public function removeAt(index:uint):void
 		{
 			_items.splice(index, 1);
-			--_numItems;
 		}
 		
 		/**
@@ -124,8 +118,7 @@
 		 */
 		public function clear():void
 		{
-			_items = new Vector.<EfNode>(_initialSize);
-			_numItems = 0;
+			_items = new Vector.<EfNode>();
 		}
 		
 		/**
@@ -133,7 +126,7 @@
 		 */
 		public function update(offset:Point, elapsedTime:uint):void
 		{
-			for (var nNode:int = _numItems - 1; nNode >= 0; --nNode)
+			for (var nNode:int = _items.length - 1; nNode >= 0; --nNode)
 			{
 				_items[nNode].update(offset, elapsedTime);
 			}
@@ -144,7 +137,7 @@
 		 */
 		public function render():void
 		{
-			for (var nNode:int = _numItems - 1; nNode >= 0; --nNode)
+			for (var nNode:int = _items.length - 1; nNode >= 0; --nNode)
 			{
 				_items[nNode].render();
 			}
@@ -159,9 +152,5 @@
 		}
 		
 		private var _items:Vector.<EfNode>;
-		private var _numItems:uint;
-
-		private var _initialSize:uint;
 	}
-
 }

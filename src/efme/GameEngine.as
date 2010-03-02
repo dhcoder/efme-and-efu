@@ -220,49 +220,52 @@
 			var currFrameTime:int = flash.utils.getTimer();
 			var elapsedTime:uint = currFrameTime - _prevFrameTime;
 			_prevFrameTime = currFrameTime;
-
-			onUpdate(elapsedTime);
 			
-			if (_gameState != null)
+			if (!assets.isLoading()) // Pause the game while assets are loading. 
+			// TODO Some way to let the users handle this? Show a progress bar or something?
 			{
-				_gameState.update(elapsedTime);
-			}
-			
-			keyboard.update(elapsedTime);
-			mouse.update(elapsedTime);
-
-			//
-			// Handle render
-			//
-			
-			_screen.beginDraw();
-			_screen.clear();
-			
-			onRenderBackground();
-			
-			if (_gameState != null)
-			{
-				_gameState.render();
-			}
-			
-			onRenderForeground();
-			_screen.endDraw();
-
-			//
-			// Check if we should move to the next game state
-			//
-			
-			if (_gameStateNext != null)
-			{
-				_gameState = _gameStateNext;
-				_gameState.handleEntered();
+				onUpdate(elapsedTime);
 				
-				_gameStateNext = null;
+				if (_gameState != null)
+				{
+					_gameState.update(elapsedTime);
+				}
 				
-				System.gc();
-				System.gc();
-			}
+				keyboard.update(elapsedTime);
+				mouse.update(elapsedTime);
 
+				//
+				// Handle render
+				//
+				
+				_screen.beginDraw();
+				_screen.clear();
+				
+				onRenderBackground();
+				
+				if (_gameState != null)
+				{
+					_gameState.render();
+				}
+				
+				onRenderForeground();
+				_screen.endDraw();
+
+				//
+				// Check if we should move to the next game state
+				//
+				
+				if (_gameStateNext != null)
+				{
+					_gameState = _gameStateNext;
+					_gameState.handleEntered();
+					
+					_gameStateNext = null;
+					
+					System.gc();
+					System.gc();
+				}
+			}
 		}
 		
 		private static const MAX_FPS:uint = 200;

@@ -2,10 +2,12 @@
 {
 	import efme.core.graphics2d.Screen;
 	import efme.core.graphics2d.support.Anchor;
+	import efme.core.graphics2d.support.Color;
 	import efme.core.graphics2d.support.DrawOptions;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
+	import flash.events.AsyncErrorEvent;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -48,6 +50,153 @@
 		public static function get renderAnchor():int { return _renderAnchor; }
 		public static function set renderAnchor(value:int):void { _renderAnchor = value; }
 
+		public static function pushOffset(offset:Point):void
+		{
+			if (_offsetStack == null)
+			{
+				_offsetStack = new Vector.<Point>();
+			}
+			else
+			{
+				var offsetPrev:Point = _offsetStack[_offsetStack.length - 1];
+				offset.x += offsetPrev.x;
+				offset.y += offsetPrev.y;
+			}
+			
+			_offsetStack.push(offset);
+		}
+		
+		public static function pushColor(color:uint, alpha:Number):void
+		{
+			if (_colorStack == null)
+			{
+				_colorStack = new Vector.<uint>();
+				_alphaStack = new Vector.<Number>();
+			}
+			else
+			{
+				var colorPrev:uint = _colorStack[_colorStack.length - 1];
+				var alphaPrev:Number = _alphaStack[_alphaStack.length - 1];
+				
+				color = Color.blendColors(color, colorPrev);
+				alpha *= alphaPrev;
+			}
+			
+			_colorStack.push(color);
+			_alphaStack.push(alpha);
+		}
+		
+		public static function popOffset():void
+		{
+			if (_offsetStack != null)
+			{
+				_offsetStack.pop();
+				
+				if (_offsetStack.length == 0)
+				{
+					_offsetStack = null;
+				}
+			}
+			else
+			{
+				throw new Error("Extra, unmatched popOffset() called.");
+			}
+		}
+		
+		public static function popColor():void
+		{
+			if (_colorStack != null)
+			{
+				_colorStack.pop();
+				_alphaStack.pop();
+				
+				if (_colorStack.length == 0)
+				{
+					_colorStack = null;
+					_alphaStack = null;
+				}
+			}
+			else
+			{
+				throw new Error("Extra, unmatched popOffset() called.");
+			}
+		}
+		
+		/**
+		 * Update the draw state for all Images.
+		 * 
+		 * <p> If a draw state is set, it affects all subsequent 
+		 * <code>drawXXX(...)</code> calls. For example, if a draw state is set
+		 * to X=100, y=300, rotate=45, then a call to 
+		 * <code>draw(...)</code> at X=10, Y=10, rotate=100 will *actually*
+		 * draw the image at X=110, y=310, rotate=145.
+		 * 
+		 * <p> This functionality is used so you can group images in a
+		 * hierarchy, where the parent specifies some global 
+		 * position/color/rotation settings, and the child images are
+		 * influenced by it.
+		 * 
+		 * @param offset
+		 * @param drawOptions
+		 * 
+		 * @see popDrawState
+		public static function pushDrawState(area:Rectangle, color:uint, alpha:Number, rotate:Number, rotateAnchor:uint):void
+		{
+			var matrixAppend:Matrix = new Matrix();
+			
+			var rotateAnchorPoint:Point = Anchor.getAnchorPoint(Rectangle, rotateAnchor);
+			matrixAppend.translate( -rotateAnchorPoint.x, -rotateAnchorPoint.y );
+			matrixAppend.rotate(rotate * DEG_TO_RAD);
+			matrixAppend.translate( -rotateAnchorPoint.x, -rotateAnchorPoint.y );
+
+			matrixAppend.translate(offset.x, offset.y);
+			
+			var colorAppend:uint = color;
+			var alphaAppend:Number = alpha;
+			
+			if (_stackSize == 0)
+			{
+				_matrixStack = new Vector.<Matrix>(0);
+				_colorStack = new Vector.<uint>(0);
+				_alphaStack = new Vector.<Number>(0);
+			}
+			else
+			{
+				matrixAppend.concat(_matrixStack[_stackSize - 1]);
+				colorAppend = 0xFFFFFF;
+				alphaAppend *= _alphaStack[_stackSize - 1];
+			}
+
+			_matrixStack.push(matrixAppend);
+			_colorStack.push(colorAppend);
+			_alphaStack.push(alphaAppend);
+
+			++_stackSize;
+			
+		}
+		
+		public static function popDrawState():void
+		{
+			if (_stackSize == 0)
+			{
+				throw new Error("Calling Image.popDrawState() when there's no draw state set.");
+			}
+			
+			_matrixStack.pop();
+			_colorStack.pop();
+			_alphaStack.pop();
+			
+			--_stackSize;
+			
+			if (_stackSize == 0)
+			{
+				_matrixStack = null;
+				_colorStack = null;
+				_alphaStack = null;
+			}
+		}
+		*/
+		
 		/**
 		 * Initialize your image. Specify a tile width and height if the image
 		 * is divided into a grid.
@@ -188,7 +337,29 @@
 		{
 			if (_bitmapData != null)
 			{
-				if (drawOptions == null || drawOptions.hasNoEffect())
+				//
+				// Prepare destination point - this can be adjusted by the
+				// render anchor and also the global draw-state offset
+				//
+				
+				if (_renderAnchor != Anchor.TOP_LEFT)
+				{
+					var imageRect:Rectangle = new Rectangle(0, 0, sourceRect.width, sourceRect.height);
+					var renderAnchorPoint:Point = Anchor.getAnchorPoint(imageRect, _renderAnchor);
+					
+					destPoint.x -= renderAnchorPoint.x;
+					destPoint.y -= renderAnchorPoint.y;
+				}
+				
+				if (_offsetStack != null)
+				{
+					var offset:Point = _offsetStack[_offsetStack.length - 1];
+					destPoint.x += offset.x;
+					destPoint.y += offset.y;
+				}
+				
+				if ((drawOptions == null || drawOptions.hasNoEffect()) &&
+					(_colorStack == null || _colorStack[_colorStack.length - 1] == 0xFFFFFF && _alphaStack[_alphaStack.length - 1] == 1.0))
 				{
 					// Basic rendering. It's super fast!
 					screen.bitmapData.copyPixels(_bitmapData, sourceRect, destPoint);
@@ -248,11 +419,10 @@
 					
 					if (drawOptions.rotation != 0.0)
 					{
-						// TODO: Get this point based on anchor information
-						var anchorPoint:Point = Anchor.getAnchorPoint(bitmapDataFinal.rect, drawOptions.rotationAnchor);
-						matrix.translate(-anchorPoint.x, -anchorPoint.y);
+						var rotateAnchorPoint:Point = Anchor.getAnchorPoint(bitmapDataFinal.rect, drawOptions.rotationAnchor);
+						matrix.translate(-rotateAnchorPoint.x, -rotateAnchorPoint.y);
 						matrix.rotate(drawOptions.rotation * DEG_TO_RAD)
-						matrix.translate(anchorPoint.x, anchorPoint.y);
+						matrix.translate(rotateAnchorPoint.x, rotateAnchorPoint.y);
 					}
 
 					//
@@ -266,20 +436,27 @@
 					// Handle blending colors and setting alpha
 					//
 					
-					if (drawOptions.blendColor != 0xFFFFFF || drawOptions.alpha < 1.0)
+					var blendColorFinal:uint = drawOptions.blendColor;
+					var alphaFinal:Number = drawOptions.alpha;
+					
+					if (_colorStack != null)
+					{
+						blendColorFinal = Color.blendColors(blendColorFinal, _colorStack[_colorStack.length - 1]);
+						alphaFinal *= _alphaStack[_alphaStack.length - 1];
+					}
+					
+					if (blendColorFinal != 0xFFFFFF || alphaFinal < 1.0)
 					{
 						colorTransform = new ColorTransform();
 						
-						if (drawOptions.blendColor != 0xFFFFFF)
+						if (blendColorFinal != 0xFFFFFF)
 						{
-							var r:uint = (drawOptions.blendColor & 0xFF0000) >> 16;
-							var g:uint = (drawOptions.blendColor & 0x00FF00) >> 8;
-							var b:uint = (drawOptions.blendColor & 0x0000FF);
-							colorTransform.redMultiplier = r / 255.0;
-							colorTransform.greenMultiplier = g / 255.0;
-							colorTransform.blueMultiplier = b / 255.0;
+							var color:Color = new Color(blendColorFinal);
+							colorTransform.redMultiplier = color.r / 255.0;
+							colorTransform.greenMultiplier = color.g / 255.0;
+							colorTransform.blueMultiplier = color.b / 255.0;
 						}
-						colorTransform.alphaMultiplier = drawOptions.alpha;
+						colorTransform.alphaMultiplier = alphaFinal;
 					}
 
 					//
@@ -289,12 +466,12 @@
 				}
 			}
 		}
-		
+
 		/**
 		 * Constant to convert from degrees (our unit of preference) to radians
 		 * (Flash's unit of preference);
 		 */
-		private const DEG_TO_RAD:Number = Math.PI / 180.0;
+		private static const DEG_TO_RAD:Number = Math.PI / 180.0;
 
 		/**
 		 * Render anchor, option global for all images. As far as I understand
@@ -302,7 +479,17 @@
 		 * set per draw call.
 		 */
 		private static var _renderAnchor:int = Anchor.TOP_LEFT;
-		
+
+		/**
+		 * The following stack variables are used in the
+		 * <code>pushDrawOptions(drawOptions)</code> call.
+		 */
+		private static var _offsetStack:Vector.<Point> = null;
+		private static var _colorStack:Vector.<uint> = null;
+		private static var _alphaStack:Vector.<Number> = null;
+
+		private static var _matrixStack:Vector.<Matrix> = null;
+
 		/**
 		 * The bitmap data that our image will render
 		 */
@@ -322,7 +509,7 @@
 		 */
 		private var _bitmapDataX:BitmapData
 		private var _sourceRectX:Rectangle;
-		
+
 		
 	}
 

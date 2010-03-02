@@ -8,6 +8,10 @@
 	 * 
 	 * A bare-bones, "Hello, world!" example, which sets up an empty
 	 * Flash application at 640x480, with a green background color.
+	 * 
+	 * The classes you'll use in this demo.
+	 * 
+	 * - GameEngine
 	 */
 	public class Ex01_GettingStarted extends GameEngine
 	{

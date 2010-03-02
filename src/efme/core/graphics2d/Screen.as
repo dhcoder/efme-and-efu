@@ -129,10 +129,13 @@
 		 */
 		public function clear():void
 		{
-			// TODO: Error if no beginDraw
 			if (_isLocked)
 			{
 				_bitmap.bitmapData.fillRect(_bitmap.bitmapData.rect, _clearColor);
+			}
+			else
+			{
+				throw new Error("Screen.clear() called outside of beginDraw/endDraw pair");
 			}
 		}
 
