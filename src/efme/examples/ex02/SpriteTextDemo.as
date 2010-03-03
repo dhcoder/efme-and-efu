@@ -1,8 +1,9 @@
 ﻿package efme.examples.ex02 
 {
 	import efme.core.graphics2d.Image;
-	import efme.core.graphics2d.Text;
+	import efme.core.graphics2d.support.Align;
 	import efme.game.efnodes.EfnSprite;
+	import efme.game.efnodes.EfnTextArea;
 	import efme.game.GameState;
 	import efme.GameEngine;
 	import flash.geom.Point;
@@ -18,8 +19,7 @@
 		
 		private static const ANIM_WALK_LEFT:uint = 0;
 		private var _catSprite:EfnSprite;
-		
-		private var _textTest:Text;
+		private var _textArea:EfnTextArea;
 
 		/**
 		 * Construct a new SpriteTextDemo. Initialize all the assets
@@ -33,11 +33,9 @@
 			engine.assets.requestImage("data/images/image_tiled.png", catImage);
 			
 			_catSprite = new EfnSprite(this);
-			_catSprite.width = 200;
-			_catSprite.height = 250;
 			_catSprite.addAnimation(ANIM_WALK_LEFT, catImage, [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]);
 			
-			_textTest = new Text("HELLO,\nWORLD");
+			_textArea = new EfnTextArea(this, "HELLO, WORLD", 20, 200, 0.0, Align.RIGHT);
 		}
 
 		/**
@@ -48,13 +46,27 @@
 			_catSprite.x = _catSprite.y = 100;
 			_catSprite.startAnimation(ANIM_WALK_LEFT);
 			
+			_textArea.x = _textArea.y = 100;
+			
 			efNodes.add(_catSprite);
+			efNodes.add(_textArea);
 		}
 		
-		
-		override protected function onRenderForeground():void 
+		private var _total:uint = 0;
+		override protected function onUpdate(elapsedTime:uint):void 
 		{
-			_textTest.textImage.draw(engine.screen, new Point(50, 50));
+			_total += elapsedTime;
+			
+			if (_total > 20)
+			{
+				_total = 0;
+				_textArea.width--;
+				
+				if (_textArea.width == 20)
+				{
+					_textArea.width = 200;
+				}
+			}
 		}
 	}
 

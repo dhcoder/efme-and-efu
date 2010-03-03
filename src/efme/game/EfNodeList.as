@@ -126,7 +126,7 @@
 		 */
 		public function update(offset:Point, elapsedTime:uint):void
 		{
-			for (var nNode:int = _items.length - 1; nNode >= 0; --nNode)
+			for (var nNode:uint = 0; nNode < _items.length; ++nNode)
 			{
 				_items[nNode].update(offset, elapsedTime);
 			}
@@ -137,7 +137,7 @@
 		 */
 		public function render():void
 		{
-			for (var nNode:int = _items.length - 1; nNode >= 0; --nNode)
+			for (var nNode:uint = 0; nNode < _items.length; ++nNode)
 			{
 				_items[nNode].render();
 			}

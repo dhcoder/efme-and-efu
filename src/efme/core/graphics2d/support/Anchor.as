@@ -60,7 +60,7 @@
 					anchorPoint = rect.bottomRight;
 					break;
 				default:
-					throw new Error("Requested anchor point with bad anchorStyle argument");
+					throw new Error("Called getAnchorPoint() with bad anchorStyle value");
 					break;
 			}
 			
