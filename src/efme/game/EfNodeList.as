@@ -1,7 +1,7 @@
 ﻿package efme.game 
 {
 	import flash.geom.Point;
-	import flash.utils.Proxy;
+	import flash.utils.Dictionary;
 
 	/**
 	 * A collection of <code>EfNode</code>s. If you create your own 
@@ -11,11 +11,7 @@
 	public class EfNodeList
 	{
 		/**
-		 * Create a new list of nodes.
-		 * 
-		 * @param initialSize An initial size to make this list. If you add more
-		 * nodes than this size, it will automatically expand. If set to 0,
-		 * a reasonable default will be used. (Default = 0)
+		 * Create an empty list of nodes.
 		 */
 		public function EfNodeList() 
 		{

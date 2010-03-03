@@ -1,4 +1,4 @@
-﻿package efme.game.efnodes.support 
+﻿package efme.game
 {
 	import efme.core.graphics2d.Image;
 	/**

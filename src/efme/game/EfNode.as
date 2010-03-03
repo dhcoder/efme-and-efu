@@ -78,6 +78,7 @@
 			_active = true;
 			_rectArea = new Rectangle();
 			_drawOptions = new DrawOptions();
+			_alarms = new AlarmList();
 		}
 		
 		public function get parentState():GameState { return _parentState; }
@@ -142,6 +143,12 @@
 		public function set rotationAnchor(value:uint):void { _drawOptions.rotationAnchor = value; _modified = true; }
 		
 		/**
+		 * Get this node's list of alarms. You can directly add new alarms to
+		 * this property.
+		 */
+		public function get alarms():AlarmList { return _alarms; }
+		
+		/**
 		 * Update this EfNode. This call will be ignored if the node is not
 		 * active.
 		 * 
@@ -164,6 +171,8 @@
 					offset.x -= _rectArea.x;
 					offset.y -= _rectArea.y;
 				}
+				
+				_alarms.update(elapsedTime);
 			}
 		}
 		
@@ -241,5 +250,6 @@
 		private var _modified:Boolean;
 
 		private var _childNodes:EfNodeList;
+		private var _alarms:AlarmList;
 	}
 }

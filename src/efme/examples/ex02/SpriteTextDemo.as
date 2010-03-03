@@ -2,6 +2,8 @@
 {
 	import efme.core.graphics2d.Image;
 	import efme.core.graphics2d.support.Align;
+	import efme.game.Alarm;
+	import efme.game.Callback;
 	import efme.game.efnodes.EfnSprite;
 	import efme.game.efnodes.EfnTextArea;
 	import efme.game.GameState;
@@ -46,6 +48,9 @@
 			_catSprite.x = _catSprite.y = 100;
 			_catSprite.startAnimation(ANIM_WALK_LEFT);
 			
+			_catSprite.alarms.add(new Alarm(1000, new Callback(meow)));
+			_catSprite.alarms.add(new Alarm(1500, new Callback(meow, "Unya??"), false), true, false);
+			
 			_textArea.x = _textArea.y = 100;
 			
 			efNodes.add(_catSprite);
@@ -67,6 +72,12 @@
 					_textArea.width = 200;
 				}
 			}
+		}
+		
+		private function meow(cry:String = "UNYAAAA!"):void
+		{
+			trace(_catSprite.alarms);
+			trace(cry);
 		}
 	}
 

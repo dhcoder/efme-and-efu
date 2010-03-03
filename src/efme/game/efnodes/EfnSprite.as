@@ -2,10 +2,11 @@
 {
 	import efme.core.graphics2d.Image;
 	import efme.core.graphics2d.support.DrawOptions;
+	import efme.core.graphics2d.support.TilePosition;
+	import efme.game.Animation;
+	import efme.game.AnimationState;
+	import efme.game.Callback;
 	import efme.game.EfNode;
-	import efme.game.efnodes.support.Animation;
-	import efme.game.efnodes.support.AnimationState;
-	import efme.game.efnodes.support.TilePosition;
 	import efme.game.GameState;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -54,6 +55,18 @@
 		 */
 		public function get targetImage():Image { return _targetImage; }
 		public function set targetImage(value:Image):void { _targetImage = value; setToWholeImage(); }
+		
+		/**
+		 * Whether or not this sprite is flipped horizontally.
+		 */
+		public function get flipX():Boolean { return drawOptions.flipX; }
+		public function set flipX(value:Boolean):void { drawOptions.flipX = value; modified = true; }
+		
+		/**
+		 * Whether or not this sprite is flipped vertically.
+		 */
+		public function get flipY():Boolean { return drawOptions.flipY; }
+		public function set flipY(value:Boolean):void { drawOptions.flipY = value; modified = true; }
 		
 		/**
 		 * By default, sprites use the whole image. If this sprite's target
@@ -134,14 +147,14 @@
 			}
 		}
 		
-		public function addAnimation(animIndex:uint, sourceImage:Image, frames:Array, repeat:Boolean = true, callbackAnimComplete:Function = null):void
+		public function addAnimation(animIndex:uint, sourceImage:Image, frames:Array, repeat:Boolean = true, callbackAnimComplete:Callback = null):void
 		{
 			if (sourceImage == null) { throw new Error("Attempting to add animation with no source image."); }
 			var animData:Animation = new Animation(sourceImage, frames);
 			addAnimationData(animIndex, animData, repeat, callbackAnimComplete);
 		}
 		
-		public function addAnimationData(animIndex:uint, animData:Animation, repeat:Boolean = true, callbackAnimComplete:Function = null):void
+		public function addAnimationData(animIndex:uint, animData:Animation, repeat:Boolean = true, callbackAnimComplete:Callback = null):void
 		{
 			if (_dictAnims == null) { _dictAnims = new Dictionary(); }
 			

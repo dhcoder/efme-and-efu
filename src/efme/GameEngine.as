@@ -257,6 +257,7 @@
 				
 				if (_gameStateNext != null)
 				{
+					// Remove all from game state. This clears all nodes and alarms?
 					_gameState = _gameStateNext;
 					_gameState.handleEntered();
 					
