@@ -151,8 +151,8 @@
 		/**
 		 * The alignment of this text area. 
 		 */
-		public function get align():int { return _alignment; }
-		public function set align(value:int):void
+		public function get alignment():int { return _alignment; }
+		public function set alignment(value:int):void
 		{
 			if (_alignment != value)
 			{

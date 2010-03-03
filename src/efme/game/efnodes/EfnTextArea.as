@@ -18,18 +18,32 @@
 			this.height = height;
 		}
 		
-		/**
-		 * Provide access to this node's text area. This is useful if you want
-		 * to change any text settings after construction.
-		 */
-		public function get targetTextArea():TextArea { return _textArea; }
+		public function get text():String { return _textArea.text; }
+		public function set text(value:String):void { _textArea.text = value; }
+		
+		public function get size():uint { return _textArea.size; }
+		public function set size(value:uint):void { _textArea.size = value; }
+		
+		public function get alignment():int { return _textArea.alignment; }
+		public function set alignment(value:int):void { _textArea.alignment = value; }
+
+		public function get lineSpacing():uint { return _textArea.alignment; }
+		public function set lineSpacing(value:uint):void { _textArea.alignment = value; }
+
+		public function get font():String { return _textArea.font; }
+		public function set font(value:String):void { _textArea.font = value; }
+
+		public function beginUpdate():void { _textArea.beginUpdate(); }
+		public function endUpdate():void { _textArea.endUpdate(); }
 		
 		override protected function onUpdate(offset:Point, elapsedTime:uint):void 
 		{
 			if (modified)
 			{
+				_textArea.beginUpdate();
 				_textArea.maxWidth = width;
 				_textArea.maxHeight = height;
+				_textArea.endUpdate();
 			}
 		}
 		

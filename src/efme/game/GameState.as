@@ -21,6 +21,7 @@
 			
 			_camera = new Point(0, 0);
 			_efNodes = new EfNodeList();
+			_alarms = new AlarmList();
 		}
 		
 		/**
@@ -40,6 +41,12 @@
 		 * The EfNodes that represent the game objects in this game state.
 		 */
 		public function get efNodes():EfNodeList { return _efNodes; }
+	
+		/**
+		 * Get this game state's list of alarms. You can directly add new
+		 * alarms to this property.
+		 */
+		public function get alarms():AlarmList { return _alarms; }
 		
 		/**
 		 * When a <code>GameEngine</code> enters a new game state, this
@@ -136,6 +143,7 @@
 		private var _camera:Point;
 		private var _reverseCamera:Point; // Updated at the beginning of each update loop
 		private var _efNodes:EfNodeList;
+		private var _alarms:AlarmList;
 	}
 
 }

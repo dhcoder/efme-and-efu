@@ -1,5 +1,6 @@
-﻿package efme.game.efnodes.support 
+﻿package efme.game
 {
+	import efme.core.graphics2d.support.TilePosition;
 	import efme.core.graphics2d.Image;
 	/**
 	 * A class to handle the current state of an animation.
@@ -23,16 +24,16 @@
 		 * @param repeat Whether or not to loop this animation (default = true)
 		 * @param callbackAnimComplete For non-looping animations, you can specify a callback to be called when the animation is complete (default = null)
 		 */
-		public function AnimationState(targetAnim:Animation, repeat:Boolean = true, callbackAnimComplete:Function = null)
+		public function AnimationState(targetAnim:Animation, repeat:Boolean = true, callbackAnimComplete:Callback = null)
 		{
 			_targetAnim = targetAnim;
 			
 			_repeat = repeat;
-			
+			_callbackAnimComplete = callbackAnimComplete;
+
 			_currentTile = new TilePosition();
 			reset();
 			
-			_callbackAnimComplete = callbackAnimComplete;
 		}
 		
 		public function get targetAnim():Animation { return _targetAnim; }
@@ -75,7 +76,7 @@
 		}
 		
 		/**
-		 * Restart this animation back at the beginning.
+		 * Restart this animation back to the beginning.
 		 */
 		public function reset():void 
 		{
@@ -122,7 +123,7 @@
 						
 						if (_callbackAnimComplete != null)
 						{
-							_callbackAnimComplete();
+							_callbackAnimComplete.call();
 						}
 					}
 				}
@@ -144,7 +145,7 @@
 		private var _stopped:Boolean;
 		private var _animComplete:Boolean;
 		
-		private var _callbackAnimComplete:Function;
+		private var _callbackAnimComplete:Callback;
 	}
 
 }
