@@ -15,7 +15,7 @@
 		 */
 		public function EfNodeList() 
 		{
-			clear();
+			_items = new Vector.<EfNode>();
 		}
 		
 		/**
@@ -50,7 +50,14 @@
 		 */
 		public function add(efNode:EfNode):void
 		{
-			_items.push(efNode);
+			if (efNode != null)
+			{
+				_items.push(efNode);
+			}
+			else
+			{
+				throw new Error("Can't add null EfNode to node list.");
+			}
 		}
 		
 		/**
@@ -60,7 +67,7 @@
 		{
 			for (var nNodeAdd:int = 0; nNodeAdd < efNodes.length; ++nNodeAdd)
 			{
-				_items.push(efNodes[nNodeAdd]);
+				add(efNodes[nNodeAdd]);
 			}
 		}
 		
@@ -72,7 +79,7 @@
 		{
 			for (var nNodeAdd:int = 0; nNodeAdd < efNodeList._items.length; ++nNodeAdd)
 			{
-				_items.push(efNodeList._items[nNodeAdd]);
+				add(efNodeList._items[nNodeAdd]);
 			}
 		}
 		
@@ -114,7 +121,7 @@
 		 */
 		public function clear():void
 		{
-			_items = new Vector.<EfNode>();
+			_items.splice(0, _items.length);
 		}
 		
 		/**

@@ -51,17 +51,17 @@
 		public static function get defaultFont():String { return _defaultFont; }
 		public static function set defaultFont(value:String):void { _defaultFont = value; }
 
-		public function TextArea(text:String = "", size:uint = 10, maxWidth:Number = 0.0, maxHeight:Number = 0.0, alignment:int = Align.LEFT, font:String = "") 
+		public function TextArea(text:String = "", size:uint = 10, width:Number = 0.0, height:Number = 0.0, textColor:uint = 0xFFFFFF, alignment:int = Align.LEFT, font:String = "") 
 		{
 			_textField = new TextField();
 			_textField.text = text;
-			_textField.textColor = 0xFF0000;
+			_textField.textColor = textColor;
 			_textField.multiline = true;
 			_textField.wordWrap = true;
 			
 			_alignment = alignment;
-			_maxWidth = maxWidth;
-			_maxHeight = maxHeight;
+			_width = width;
+			_height = height;
 			
 			_textFormat = new TextFormat();
 			_textFormat.size = size;
@@ -99,7 +99,7 @@
 				renderTextToImage();
 			}
 		}
-		
+
 		/**
 		 * The font size of this TextArea.
 		 */
@@ -115,17 +115,31 @@
 		}
 		
 		/**
+		 * The text color of this TextArea.
+		 */
+		public function get textColor():uint { return _textField.textColor; }
+		public function set textColor(value:uint):void
+		{
+			if (_textField.textColor != value)
+			{
+				_textField.textColor = value;
+				_modified = true;
+				renderTextToImage();
+			}
+		}
+		
+		/**
 		 * The maximum width of this text area. When text hits this limit,
 		 * it wraps.
 		 * 
 		 * <p> If set to 0.0 (or less), this indicates no maximum width is set.
 		 */
-		public function get maxWidth():Number { return _maxWidth; }
-		public function set maxWidth(value:Number):void
+		public function get width():Number { return _width; }
+		public function set width(value:Number):void
 		{
-			if (_maxWidth != value)
+			if (_width != value)
 			{
-				_maxWidth = value;
+				_width = value;
 				_modified = true;
 				renderTextToImage()
 			}
@@ -137,12 +151,12 @@
 		 * 
 		 * <p> If set to 0.0 (or less), this indicates no maximum height is set.
 		 */
-		public function get maxHeight():Number { return _maxHeight; }
-		public function set maxHeight(value:Number):void
+		public function get height():Number { return _height; }
+		public function set height(value:Number):void
 		{
-			if (_maxHeight != value)
+			if (_height != value)
 			{
-				_maxHeight = value;
+				_height = value;
 				_modified = true;
 				renderTextToImage();
 			}
@@ -192,12 +206,25 @@
 				renderTextToImage();
 			}
 		}
+		
+		/**
+		 * Get the current width of the text, in pixels. This should always
+		 * be less than or equal to the width of this text area.
+		 */
+		public function get textWidth():Number { return _textField.textWidth; }
+
+		/**
+		 * Get the current height of the text, in pixels. This should always
+		 * be less than or equal to the width of this text area.
+		 */
+		public function get textHeight():Number { return _textField.textHeight; }
 
 		/**
 		 * Return the underlying image that has the requested text rendered 
 		 * on it. Use <code>textArea.image.draw(screen, ...)</code> to draw
 		 * this text area's contents to the screen.
 		 */
+		// TODO: Delay creating this text area's image until first call to here
 		public function get image():Image { return _textImage; }
 
 		/**
@@ -258,9 +285,12 @@
 			
 			_textFormat.align = Align.toString(_alignment);
 			
+			var fudge:uint = 5; // Fudge factor to give a bit of extra width and height to the text area, because otherwise textField sometimes dumps text
+			// TODO: Use TextBlock instead!
+			
 			_textField.setTextFormat(_textFormat);
-			_textField.width = (_maxWidth > 0.0 ? _maxWidth : _textField.textWidth);
-			_textField.height = (_maxHeight > 0.0 ? _maxHeight : _textField.textHeight + _textField.getLineMetrics(_textField.numLines - 1).descent);
+			_textField.width = (_width > 0.0 ? _width : _textField.textWidth + fudge);
+			_textField.height = (_height > 0.0 ? _height : _textField.textHeight + _textField.getLineMetrics(_textField.numLines - 1).descent + fudge);
 			
 			if (bitmapData == null || bitmapData.width < _textField.width || bitmapData.height < _textField.height)
 			{
@@ -282,8 +312,8 @@
 		private var _textFormat:TextFormat;
 
 		private var _alignment:int;
-		private var _maxWidth:Number;
-		private var _maxHeight:Number;
+		private var _width:Number;
+		private var _height:Number;
 		
 		private var _textImage:Image;
 		

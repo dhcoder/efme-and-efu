@@ -22,14 +22,12 @@
 		 * 
 		 * @param anim The target animation to track
 		 * @param repeat Whether or not to loop this animation (default = true)
-		 * @param callbackAnimComplete For non-looping animations, you can specify a callback to be called when the animation is complete (default = null)
 		 */
-		public function AnimationState(targetAnim:Animation, repeat:Boolean = true, callbackAnimComplete:Callback = null)
+		public function AnimationState(targetAnim:Animation, repeat:Boolean = true)
 		{
 			_targetAnim = targetAnim;
 			
 			_repeat = repeat;
-			_callbackAnimComplete = callbackAnimComplete;
 
 			_currentTile = new TilePosition();
 			reset();
@@ -49,10 +47,13 @@
 		 * <code>resume()</code>.
 		 * 
 		 * <p> To pause an animation, call <code>stop()</code>.
+		 * 
+		 * @param callbackAnimComplete For non-looping animations, you can specify a callback to be called when the animation is complete (default = null)
 		 */
-		public function start():void
+		public function start(callbackAnimComplete:Callback = null):void
 		{
 			reset();
+			_callbackAnimComplete = callbackAnimComplete;
 			_stopped = false;
 		}
 
@@ -86,6 +87,7 @@
 			
 			_stopped = true;
 			_animComplete = false;
+			_callbackAnimComplete = null;
 			
 			_timeCounter = 0;
 			_currentFrame = 0;
