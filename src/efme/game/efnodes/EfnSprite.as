@@ -54,7 +54,14 @@
 		 * Get or set the active image this sprite displays.
 		 */
 		public function get targetImage():Image { return _targetImage; }
-		public function set targetImage(value:Image):void { _targetImage = value; setToWholeImage(); }
+		public function set targetImage(value:Image):void
+		{
+			if (_targetImage != value)
+			{
+				_targetImage = value;
+				setToWholeImage();
+			}
+		}
 		
 		/**
 		 * Whether or not this sprite is flipped horizontally.
@@ -67,6 +74,12 @@
 		 */
 		public function get flipY():Boolean { return drawOptions.flipY; }
 		public function set flipY(value:Boolean):void { drawOptions.flipY = value; modified = true; }
+		
+		/**
+		 * The current animation that is set. Check <code>isAnimPlaying</code>
+		 * to see if it's currently playing.
+		 */
+		public function get currentAnimation():int { return _currentAnim; }
 		
 		/**
 		 * By default, sprites use the whole image. If this sprite's target
@@ -147,27 +160,33 @@
 			}
 		}
 		
-		public function addAnimation(animIndex:uint, sourceImage:Image, frames:Array, repeat:Boolean = true, callbackAnimComplete:Callback = null):void
+		public function addAnimation(animIndex:uint, sourceImage:Image, frames:Array, repeat:Boolean = true):void
 		{
 			if (sourceImage == null) { throw new Error("Attempting to add animation with no source image."); }
 			var animData:Animation = new Animation(sourceImage, frames);
-			addAnimationData(animIndex, animData, repeat, callbackAnimComplete);
+			addAnimationData(animIndex, animData, repeat);
 		}
 		
-		public function addAnimationData(animIndex:uint, animData:Animation, repeat:Boolean = true, callbackAnimComplete:Callback = null):void
+		public function addAnimationData(animIndex:uint, animData:Animation, repeat:Boolean = true):void
 		{
 			if (_dictAnims == null) { _dictAnims = new Dictionary(); }
 			
-			_dictAnims[animIndex] = new AnimationState(animData, repeat, callbackAnimComplete);
+			_dictAnims[animIndex] = new AnimationState(animData, repeat);
 		}
 		
-		public function startAnimation(animIndex:uint):Boolean
+		public function startAnimation(animIndex:uint, callbackAnimComplete:Callback = null):Boolean
 		{
 			if (_dictAnims[animIndex] != null)
 			{
+				if (_currentAnim >= 0)
+				{
+					// Clear any current animation that's already playing
+					(_dictAnims[_currentAnim] as AnimationState).reset();
+				}
+
 				_currentAnim = animIndex;
 				var animState:AnimationState = _dictAnims[animIndex];
-				animState.start();
+				animState.start(callbackAnimComplete);
 				
 				return true;
 			}
@@ -241,6 +260,14 @@
 			{
 				var animState:AnimationState = _dictAnims[_currentAnim];
 				animState.update(elapsedTime);
+			}
+			
+			// This second "currentAnim" check might seem useless, but an
+			// animState.update(...) call might have triggered a callback which,
+			// in turn, changed the current animationftrac.
+			if (_currentAnim >= 0)
+			{
+				animState = _dictAnims[_currentAnim]; 
 				
 				modified = (_targetImage != animState.targetAnim.sourceImage);
 				_targetImage = animState.targetAnim.sourceImage;

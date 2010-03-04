@@ -13,7 +13,8 @@
 		 */
 		public function AlarmList() 
 		{
-			clear();
+			_items = new Vector.<Alarm>();
+			_keepAlarmResident = new Dictionary(true);
 		}
 		
 		/**
@@ -100,8 +101,12 @@
 		 */
 		public function clear():void
 		{
-			_items = new Vector.<Alarm>();
-			_keepAlarmResident = new Dictionary(true);
+			_items.splice(0, _items.length);
+			
+			for (var key:Object in _keepAlarmResident)
+			{
+				delete _keepAlarmResident[key];
+			}
 		}
 		
 		/**

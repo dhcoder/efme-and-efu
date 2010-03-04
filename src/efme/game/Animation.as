@@ -59,6 +59,73 @@
 		public static function set defaultFrameLength(value:uint):void { AnimationState.defaultFrameLength = value; }
 
 		/**
+		 * A helper function which, assuming most animations in a tiled image go
+		 * from left-to-right, top-to-bottom, lets you specify just the starting
+		 * and ending tiles, and generates all frames in-between.
+		 * 
+		 * @param frameLength Specify the frame length if you want this animation to have a frame rate different from the default.
+		 * 
+		 * @example The result of calling makeFrames with various arguments.
+		 * <listing version="3.0">
+		 * makeFrames(0,0, 3,0); // => [[0, 0], [1, 0], [2, 0], [3, 0]]
+		 * makeFrames(0,0, 2,1); // => [[
+		 * </listing>
+		 * 
+		 * @see makeFramesRow
+		 * @see makeFramesX
+		 */
+		public static function makeFrames(fromTileX:uint, fromTileY:uint, toTileX:uint, toTileY:uint, frameLength:uint = 0):Array
+		{
+			return makeFramesX(toTileX - fromTileX, fromTileX, fromTileY, toTileX, toTileY);
+		}
+
+		// TODO: Comment
+		public static function makeFramesRow(tileY:uint, fromTileX:uint, toTileX:uint, frameLength:uint = 0):Array
+		{
+			return makeFramesX(toTileX - fromTileX, fromTileX, tileY, toTileX, tileY, frameLength);
+		}
+		
+		// TODO: Comment
+		public static function makeFramesX(numTilesX:uint, fromTileX:uint, fromTileY:uint, toTileX:uint, toTileY:uint, frameLength:uint = 0):Array
+		{
+			if (toTileX >= fromTileX && toTileY >= fromTileY)
+			{
+				var frames:Array = new Array();
+				var thisRowToTileX:uint = numTilesX - 1;
+				
+				for (var currTileY:uint = fromTileY; currTileY <= toTileY; ++currTileY)
+				{
+					if (currTileY == toTileY)
+					{
+						thisRowToTileX = toTileX;
+					}
+					
+					for (var currTileX:uint = fromTileX; currTileX <= thisRowToTileX; ++currTileX)
+					{
+						var frame:Array;
+						
+						if (frameLength == 0)
+						{
+							frame = new Array(currTileX, currTileY);
+						}
+						else
+						{
+							frame = new Array(currTileX, currTileY, frameLength);
+						}
+						frames.push(frame);
+					}
+				}
+				
+				return frames;
+			}
+			else
+			{
+				throw new Error("Trying to make animation frames with a bad range.");
+			}
+			
+		}
+		
+		/**
 		 * Construct animation data.
 		 * 
 		 * @param sourceImage The image that this animation keys into.

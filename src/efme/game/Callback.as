@@ -49,9 +49,21 @@
 			_args = args;
 		}
 		
-		final public function call():void
+		final public function call(...argsPrepend):void
 		{
-			_callback.apply(null, _args);
+			var argsFinal:Array = _args;
+			if (argsPrepend != null)
+			{
+				if (argsFinal != null)
+				{
+					argsFinal = argsPrepend.concat(argsFinal);
+				}
+				else
+				{
+					argsFinal = argsPrepend;
+				}
+			}
+			_callback.apply(null, argsFinal);
 		}
 		
 		private var _callback:Function;

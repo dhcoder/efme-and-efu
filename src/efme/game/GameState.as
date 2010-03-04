@@ -22,6 +22,8 @@
 			_camera = new Point(0, 0);
 			_efNodes = new EfNodeList();
 			_alarms = new AlarmList();
+			
+			_active = false;
 		}
 		
 		/**
@@ -40,13 +42,33 @@
 		/**
 		 * The EfNodes that represent the game objects in this game state.
 		 */
-		public function get efNodes():EfNodeList { return _efNodes; }
+		public function get efNodes():EfNodeList
+		{
+			if (_active)
+			{
+				return _efNodes;
+			}
+			else
+			{
+				throw new Error("Attempting to access alarms for an inactive GameState. This is only allowed in or after GameState.onEntered() is called");
+			}
+		}
 	
 		/**
 		 * Get this game state's list of alarms. You can directly add new
 		 * alarms to this property.
 		 */
-		public function get alarms():AlarmList { return _alarms; }
+		public function get alarms():AlarmList
+		{
+			if (_active)
+			{
+				return _alarms;
+			}
+			else
+			{
+				throw new Error("Attempting to access alarms for an inactive GameState. This is only allowed in or after GameState.onEntered() is called");
+			}
+		}
 		
 		/**
 		 * When a <code>GameEngine</code> enters a new game state, this
@@ -57,7 +79,22 @@
 		 */
 		final public function handleEntered():void
 		{
+			_active = true;
 			onEntered();
+		}
+
+		/**
+		 * When a <code>GameEngine</code> leaves an old game state, this
+		 * function is called.
+		 * 
+		 * <p> Your own derived class should override <code>onExited()</code>
+		 * which will be called by this function.
+		 */
+		final public function handleExited():void
+		{
+			_efNodes.clear();
+			_alarms.clear();
+			_active = false;
 		}
 		
 		/**
@@ -65,6 +102,8 @@
 		 */
 		final public function update(elapsedTime:uint):void
 		{
+			_alarms.update(elapsedTime);
+
 			onUpdate(elapsedTime); // Give the game-state a chance to handle the update
 
 			// Note that if our camera is set to 100x50,
@@ -93,6 +132,14 @@
 		 * part of this game state.
 		 */
 		protected function onEntered():void 
+		{
+		}
+		
+		/**
+		 * Override in a derived class. This is a good place to clean up
+		 * any resources setup in onEntered.
+		 */
+		protected function onExited():void
 		{
 		}
 		
@@ -139,6 +186,8 @@
 		}
 
 		private var _gameEngine:GameEngine;
+		
+		private var _active:Boolean;
 		
 		private var _camera:Point;
 		private var _reverseCamera:Point; // Updated at the beginning of each update loop

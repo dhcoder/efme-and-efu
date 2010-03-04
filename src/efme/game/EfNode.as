@@ -76,6 +76,7 @@
 			}
 
 			_active = true;
+			
 			_rectArea = new Rectangle();
 			_drawOptions = new DrawOptions();
 			_alarms = new AlarmList();
@@ -93,6 +94,8 @@
 		public function get active():Boolean { return _active; }
 		public function set active(value:Boolean):void { _active = value; }
 
+		// TODO: Check if value chaned before setting modified to true
+		
 		/**
 		 * The x-coordinate of this node (relative to its parent)
 		 */
@@ -158,6 +161,8 @@
 		{
 			if (_active)
 			{
+				_alarms.update(elapsedTime);
+
 				onUpdate(offset, elapsedTime);
 				_modified = false;
 				
@@ -171,8 +176,6 @@
 					offset.x -= _rectArea.x;
 					offset.y -= _rectArea.y;
 				}
-				
-				_alarms.update(elapsedTime);
 			}
 		}
 		
@@ -198,6 +201,8 @@
 				}
 			}
 		}
+		
+		// TODO: MORE FINALS EVERYWHERE! MAKES INTERFACE INTENTIONS CLEARER
 		
 		/**
 		 * Override this function in your derived class to handle
@@ -236,15 +241,26 @@
 		protected function get drawOptions():DrawOptions { return _drawOptions; }
 
 		/**
-		 * Provide protected access to this node's children. This value can be
-		 * <code>null</code> if this <code>EfNode</code> was constructed with
-		 * <code>hasChildren = false</code>.
+		 * Provide protected access to this node's children. This will throw
+		 * an error if this EfNode was not created with 
+		 * <code>hasChildren = true</code>.
 		 */
-		protected function get childNodes():EfNodeList { return _childNodes; }
+		protected function get childNodes():EfNodeList
+		{
+			if (_childNodes != null)
+			{
+				return _childNodes;
+			}
+			else
+			{
+				throw new Error("Trying to access children for a childless node. Did you set hasChildren=true in the constructor's super(...)?");
+			}
+		}
 
 		private var _parentState:GameState;
 		
 		private var _active:Boolean;
+		
 		private var _rectArea:Rectangle;
 		private var _drawOptions:DrawOptions;
 		private var _modified:Boolean;

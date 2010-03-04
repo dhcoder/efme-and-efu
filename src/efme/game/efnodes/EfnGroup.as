@@ -18,7 +18,7 @@
 		/**
 		 * Provide access to this group's children.
 		 */
-		public function get children():EfNodeList { return childNodes; }
+		public function get efNodes():EfNodeList { return childNodes; }
 	}
 
 }

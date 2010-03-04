@@ -10,10 +10,10 @@
 	 */
 	public class EfnTextArea extends EfNode
 	{
-		public function EfnTextArea(gameState:GameState, text:String = "", size:uint = 10, width:Number = 0.0, height:Number = 0.0, align:int = Align.LEFT, font:String = "")
+		public function EfnTextArea(gameState:GameState, text:String = "", size:uint = 10, width:Number = 0.0, height:Number = 0.0, textColor:uint = 0xFFFFFF, align:int = Align.LEFT, font:String = "")
 		{
 			super(gameState);
-			_textArea = new TextArea(text, size, width, height, align, font);
+			_textArea = new TextArea(text, size, width, height, textColor, align, font);
 			this.width = width;
 			this.height = height;
 		}
@@ -23,7 +23,10 @@
 		
 		public function get size():uint { return _textArea.size; }
 		public function set size(value:uint):void { _textArea.size = value; }
-		
+
+		public function get textColor():uint { return _textArea.textColor; }
+		public function set textColor(value:uint):void { _textArea.textColor = value; }
+
 		public function get alignment():int { return _textArea.alignment; }
 		public function set alignment(value:int):void { _textArea.alignment = value; }
 
@@ -33,6 +36,9 @@
 		public function get font():String { return _textArea.font; }
 		public function set font(value:String):void { _textArea.font = value; }
 
+		public function get textWidth():Number { return _textArea.textWidth; }
+		public function get textHeight():Number { return _textArea.textHeight; }
+		
 		public function beginUpdate():void { _textArea.beginUpdate(); }
 		public function endUpdate():void { _textArea.endUpdate(); }
 		
@@ -41,8 +47,8 @@
 			if (modified)
 			{
 				_textArea.beginUpdate();
-				_textArea.maxWidth = width;
-				_textArea.maxHeight = height;
+				_textArea.width = width;
+				_textArea.height = height;
 				_textArea.endUpdate();
 			}
 		}

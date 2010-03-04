@@ -13,7 +13,7 @@
 		/**
 		 * Construct an alarm.
 		 */
-		public function Alarm(interval:uint, callback:Callback, repeat:Boolean = true)
+		public function Alarm(interval:uint, callback:Callback, repeat:Boolean = false)
 		{
 			_interval = interval;
 			_callback = callback;
