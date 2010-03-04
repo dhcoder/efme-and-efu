@@ -72,7 +72,7 @@
 			
 			_textImage = new Image();
 			
-			_isUpdating = false;
+			_isUpdating = true; // Start off in "update" mode; this will get turned off when the user accesses the "image" property for the first time
 			_modified = true;
 			
 			
@@ -225,7 +225,14 @@
 		 * this text area's contents to the screen.
 		 */
 		// TODO: Delay creating this text area's image until first call to here
-		public function get image():Image { return _textImage; }
+		public function get image():Image
+		{
+			if (_isUpdating)
+			{
+				endUpdate();
+			}
+			return _textImage;
+		}
 
 		/**
 		 * Set this TextArea's text, and if there's any leftover text that
