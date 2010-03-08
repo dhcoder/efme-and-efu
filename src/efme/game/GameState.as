@@ -77,7 +77,7 @@
 		 * <p> Your own derived class should override <code>onEntered()</code>,
 		 * which will be called by this function.
 		 */
-		final public function handleEntered():void
+		final public function enter():void
 		{
 			_active = true;
 			onEntered();
@@ -90,10 +90,12 @@
 		 * <p> Your own derived class should override <code>onExited()</code>
 		 * which will be called by this function.
 		 */
-		final public function handleExited():void
+		final public function exit():void
 		{
-			_efNodes.clear();
 			_alarms.clear();
+			_efNodes.cleanup();
+			_efNodes.clear();
+			
 			_active = false;
 		}
 		
@@ -120,9 +122,9 @@
 		final public function render():void
 		{
 			onRenderBackground();
-			Image.pushOffset(new Point(-_camera.x, -_camera.y));
+			Image.drawState.pushOffset(new Point(-_camera.x, -_camera.y));
 			_efNodes.render();
-			Image.popOffset();
+			Image.drawState.popOffset();
 			onRenderForeground();
 		}
 		

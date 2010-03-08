@@ -48,6 +48,8 @@
 			
 			_dictAnims = null;
 			_currentAnim = -1;
+			
+			updateDefaultSize();
 		}
 		
 		/**
@@ -67,13 +69,27 @@
 		 * Whether or not this sprite is flipped horizontally.
 		 */
 		public function get flipX():Boolean { return drawOptions.flipX; }
-		public function set flipX(value:Boolean):void { drawOptions.flipX = value; modified = true; }
+		public function set flipX(value:Boolean):void
+		{
+			if (drawOptions.flipX != value)
+			{
+				drawOptions.flipX = value;
+				modified = true;
+			}
+		}
 		
 		/**
 		 * Whether or not this sprite is flipped vertically.
 		 */
 		public function get flipY():Boolean { return drawOptions.flipY; }
-		public function set flipY(value:Boolean):void { drawOptions.flipY = value; modified = true; }
+		public function set flipY(value:Boolean):void
+		{
+			if (drawOptions.flipY != value)
+			{
+				drawOptions.flipY = value;
+				modified = true;
+			}
+		}
 		
 		/**
 		 * The current animation that is set. Check <code>isAnimPlaying</code>
@@ -101,13 +117,14 @@
 			if (_targetTile == null)
 			{
 				_targetTile = new TilePosition(tileX, tileY);
-				modified = true;
 			}
 			else
 			{
 				_targetTile.X = tileX;
 				_targetTile.Y = tileY;
 			}
+
+			updateDefaultSize();
 		}
 		
 		/**
@@ -138,7 +155,7 @@
 				_targetSubrect.height = subrect.height;
 			}
 			
-			modified = true;
+			updateDefaultSize();
 		}
 		
 		/**
@@ -156,10 +173,11 @@
 			{
 				_targetTile = null;
 				_targetSubrect = null;
-				modified = true;
 			}
+
+			updateDefaultSize();
 		}
-		
+
 		public function addAnimation(animIndex:uint, sourceImage:Image, frames:Array, repeat:Boolean = true):void
 		{
 			if (sourceImage == null) { throw new Error("Attempting to add animation with no source image."); }
@@ -262,9 +280,9 @@
 				animState.update(elapsedTime);
 			}
 			
-			// This second "currentAnim" check might seem useless, but an
+			// This second "currentAnim >= 0" check might seem useless, but an
 			// animState.update(...) call might have triggered a callback which,
-			// in turn, changed the current animationftrac.
+			// in turn, changed the current animation.
 			if (_currentAnim >= 0)
 			{
 				animState = _dictAnims[_currentAnim]; 
@@ -319,6 +337,38 @@
 				}
 			}
 		}
+
+		/**
+		 * Update this node's default size, depending on the current
+		 * target image settings.
+		 */
+		private function updateDefaultSize():void
+		{
+			if (_targetImage != null)
+			{
+				if (_targetTile != null)
+				{
+					defaultWidth = _targetImage.tileWidth;
+					defaultHeight = _targetImage.tileHeight;
+				}
+				else if (_targetSubrect != null)
+				{
+					defaultWidth = _targetSubrect.width;
+					defaultHeight = _targetSubrect.height;
+				}
+				else
+				{
+					defaultWidth = _targetImage.width;
+					defaultHeight = _targetImage.height;
+				}
+			}
+			else
+			{
+				defaultWidth = 0;
+				defaultHeight = 0;
+			}
+		}
+
 		
 		private var _targetImage:Image;
 		private var _targetTile:TilePosition;

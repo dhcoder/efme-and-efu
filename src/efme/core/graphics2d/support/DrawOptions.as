@@ -117,7 +117,6 @@
 				blendColor == 0xFFFFFF &&
 				alpha == 1.0 &&
 				rotation == 0.0 &&
-				rotationAnchor == Anchor.MIDDLE &&
 				applySmoothing == false);
 		}
 		

@@ -12,7 +12,7 @@
 	{
 		public function EfnGroup(gameState:GameState) 
 		{
-			super(gameState, true);
+			super(gameState);
 		}
 		
 		/**

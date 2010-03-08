@@ -20,7 +20,7 @@
 		/**
 		 * The number of alarms in this list.
 		 */
-		public function get numAlarms():uint { return _items.length; }
+		public function get length():uint { return _items.length; }
 		
 		/**
 		 * Return the alarm at the specified index.

@@ -16,31 +16,75 @@
 			_textArea = new TextArea(text, size, width, height, textColor, align, font);
 			this.width = width;
 			this.height = height;
+			
+			updateDefaultSize();
 		}
 		
 		public function get text():String { return _textArea.text; }
-		public function set text(value:String):void { _textArea.text = value; }
+		public function set text(value:String):void
+		{
+			if (_textArea.text != value)
+			{
+				_textArea.text = value;
+				updateDefaultSize();
+			}
+		}
 		
-		public function get size():uint { return _textArea.size; }
-		public function set size(value:uint):void { _textArea.size = value; }
+		public function get fontSize():uint { return _textArea.fontSize; }
+		public function set fontSize(value:uint):void
+		{
+			if (_textArea.fontSize != value)
+			{
+				_textArea.fontSize = value;
+				updateDefaultSize();
+			}
+		}
 
 		public function get textColor():uint { return _textArea.textColor; }
-		public function set textColor(value:uint):void { _textArea.textColor = value; }
+		public function set textColor(value:uint):void
+		{
+			if (_textArea.textColor != value)
+			{
+				_textArea.textColor = value;
+			}
+		}
 
 		public function get alignment():int { return _textArea.alignment; }
-		public function set alignment(value:int):void { _textArea.alignment = value; }
+		public function set alignment(value:int):void
+		{
+			if (_textArea.alignment != value)
+			{
+				_textArea.alignment = value;
+			}
+		}
 
 		public function get lineSpacing():uint { return _textArea.alignment; }
-		public function set lineSpacing(value:uint):void { _textArea.alignment = value; }
+		public function set lineSpacing(value:uint):void
+		{
+			if (_textArea.lineSpacing != value)
+			{
+				_textArea.lineSpacing = value;
+				updateDefaultSize();
+			}
+		}
 
+		// TODO: Embedded font
+		
 		public function get font():String { return _textArea.font; }
-		public function set font(value:String):void { _textArea.font = value; }
+		public function set font(value:String):void
+		{
+			if (_textArea.font != value)
+			{
+				_textArea.font = value;
+				updateDefaultSize();
+			}
+		}
 
 		public function get textWidth():Number { return _textArea.textWidth; }
 		public function get textHeight():Number { return _textArea.textHeight; }
 		
 		public function beginUpdate():void { _textArea.beginUpdate(); }
-		public function endUpdate():void { _textArea.endUpdate(); }
+		public function endUpdate():void { _textArea.endUpdate(); updateDefaultSize();  }
 		
 		override protected function onUpdate(offset:Point, elapsedTime:uint):void 
 		{
@@ -56,6 +100,16 @@
 		override protected function onRender():void 
 		{
 			_textArea.image.draw(engine.screen, new Point(x, y));
+		}
+		
+		/**
+		 * Update this node's default size, depending on the current
+		 * target textArea settings.
+		 */
+		private function updateDefaultSize():void
+		{
+			defaultWidth = _textArea.textWidth;
+			defaultHeight = _textArea.textHeight;
 		}
 		
 		private var _textArea:TextArea;

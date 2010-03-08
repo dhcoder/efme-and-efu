@@ -65,21 +65,21 @@
 		 * but you have to specify that in the constructor.
 		 *
 		 * @param parentState The game state this node is part of
-		 * @param hasChildren Whether or not this node can have children (Default = false)
 		 */
-		public function EfNode(parentState:GameState, hasChildren:Boolean = false) 
+		public function EfNode(parentState:GameState) 
 		{
 			_parentState = parentState;
-			if (hasChildren)
-			{
-				_childNodes = new EfNodeList();
-			}
+			_childNodes = null;
 
 			_active = true;
 			
-			_rectArea = new Rectangle();
+			_rectArea = new Rectangle(0, 0, -1, -1);
 			_drawOptions = new DrawOptions();
 			_alarms = new AlarmList();
+			
+			_defaultWidth = 0.0;
+			_defaultHeight = 0.0;
+
 		}
 		
 		public function get parentState():GameState { return _parentState; }
@@ -100,60 +100,173 @@
 		 * The x-coordinate of this node (relative to its parent)
 		 */
 		public function get x():Number { return _rectArea.x; }
-		public function set x(value:Number):void { _rectArea.x = value; _modified = true; }
+		public function set x(value:Number):void
+		{
+			if (_rectArea.x != value)
+			{
+				_rectArea.x = value; 
+				_modified = true;
+			}
+		}
 		
 		/**
 		 * The y-coordinate of this node (relative to its parent)
 		 */
 		public function get y():Number { return _rectArea.y; }
-		public function set y(value:Number):void { _rectArea.y = value; _modified = true; }
+		public function set y(value:Number):void
+		{
+			if (_rectArea.y != value)
+			{
+				_rectArea.y = value;
+				_modified = true;
+			}
+		}
 
 		/**
 		 * The width of this node
 		 */
-		public function get width():Number { return _rectArea.width; }
-		public function set width(value:Number):void { _rectArea.width = value; _modified = true; }
+		public function get width():Number { return (_rectArea.width >= 0.0 ? _rectArea.width : _defaultWidth); }
+		public function set width(value:Number):void
+		{
+			if (_rectArea.width != value)
+			{
+				_rectArea.width = value;
+				_modified = true;
+			}
+		}
 		
 		/**
 		 * The height of this node
 		 */
-		public function get height():Number { return _rectArea.height; }
-		public function set height(value:Number):void { _rectArea.height = value; _modified = true; }
+		public function get height():Number { return (_rectArea.height >= 0.0 ? _rectArea.height : _defaultHeight); }
+		public function set height(value:Number):void
+		{
+			if (_rectArea.height != value)
+			{
+				_rectArea.height = value;
+				_modified = true;
+			}
+		}
+
+
+		/**
+		 * Return the rectangular bounds of this node (relative to its parent).
+		 */
+		public function get bounds():Rectangle { return new Rectangle(_rectArea.x, _rectArea.y, width, height); }
 
 		/**
 		 * The tint color of this node. (Default = 0xFFFFFF, i.e. white)
 		 */
 		public function get color():uint { return _drawOptions.blendColor; }
-		public function set color(value:uint):void { _drawOptions.blendColor = value; _modified = true; }
+		public function set color(value:uint):void
+		{
+			if (_drawOptions.blendColor != value)
+			{
+				_drawOptions.blendColor = value;
+				_modified = true;
+			}
+		}
 
 		/**
 		 * The alpha of this node. Clamped 0.0 to 1.0 (Default = 1.0)
 		 */
 		public function get alpha():Number { return _drawOptions.alpha; }
-		public function set alpha(value:Number):void { _drawOptions.alpha = value; _modified = true; }
+		public function set alpha(value:Number):void
+		{
+			if (_drawOptions.alpha != value)
+			{
+				_drawOptions.alpha = value;
+				_modified = true;
+			}
+		}
 
 		/**
 		 * Number (in degrees) that you want to rotate your image.
 		 * (Default = 0.0)
 		 */
 		public function get rotation():Number { return _drawOptions.rotation; }
-		public function set rotation(value:Number):void { _drawOptions.rotation = value; _modified = true; }
+		public function set rotation(value:Number):void
+		{
+			if (_drawOptions.rotation != value)
+			{
+				_drawOptions.rotation = value;
+				_modified = true;
+			}
+		}
 		
 		/**
 		 * Anchor-point to rotate around.
 		 */
 		public function get rotationAnchor():uint { return _drawOptions.rotationAnchor; }
-		public function set rotationAnchor(value:uint):void { _drawOptions.rotationAnchor = value; _modified = true; }
+		public function set rotationAnchor(value:uint):void
+		{
+			if (_drawOptions.rotationAnchor != value)
+			{
+				_drawOptions.rotationAnchor = value;
+				_modified = true;
+			}
+		}
 		
 		/**
 		 * Get this node's list of alarms. You can directly add new alarms to
-		 * this property.
+		 * this property, by calling <code>alarms.add(new Alarm(...))</code>.
 		 */
 		public function get alarms():AlarmList { return _alarms; }
+		
+		public function fitToChildren(recursive:Boolean = false):void
+		{
+			if (_childNodes != null)
+			{
+				var nNode:uint;
+				var efNode:EfNode;
+				
+				if (recursive)
+				{
+					for (nNode = 0; nNode < _childNodes.length; ++nNode)
+					{
+						_childNodes.getNode(nNode).fitToChildren(true);
+					}
+				}
+				
+				var minX:Number = Number.MAX_VALUE;
+				var minY:Number = Number.MAX_VALUE;
+				var maxX:Number = Number.MIN_VALUE;
+				var maxY:Number = Number.MIN_VALUE;
+				
+				for (nNode = 0; nNode < _childNodes.length; ++nNode)
+				{
+					efNode = _childNodes.getNode(nNode);
+					
+					minX = Math.min(minX, efNode.x);
+					minY = Math.min(minY, efNode.y);
+					maxX = Math.max(maxX, efNode.x + efNode.width);
+					maxY = Math.max(maxY, efNode.y + efNode.height);
+				}
+				
+				x += minX
+				y += minY
+				width = maxX - minX;
+				height = maxY - minY;
+
+				if (minX != 0 || minY != 0)
+				{
+					for (nNode = 0; nNode < _childNodes.length; ++nNode)
+					{
+						efNode = _childNodes.getNode(nNode);
+						
+						efNode.x -= minX;
+						efNode.y -= minY;
+					}
+				}
+			}
+		}
 		
 		/**
 		 * Update this EfNode. This call will be ignored if the node is not
 		 * active.
+		 * 
+ 		 * <p> This function calls <code>onUpdate(...)</code> to give any
+		 * derived classes a chance to handle this call.
 		 * 
 		 * @param offset The offset of this class's parent from 0x0. To get the this EfNode's absolute position, use offset.x + x, offset.y + y
 		 */
@@ -164,7 +277,6 @@
 				_alarms.update(elapsedTime);
 
 				onUpdate(offset, elapsedTime);
-				_modified = false;
 				
 				if (_childNodes != null)
 				{
@@ -176,12 +288,21 @@
 					offset.x -= _rectArea.x;
 					offset.y -= _rectArea.y;
 				}
+				
+				onUpdateComplete();
+				
+				_modified = false;
 			}
 		}
 		
 		/**
 		 * Render this EfNode. This call will be ignored if the node is not
 		 * active or if it is totally transparent.
+		 * 
+		 * <p> This function calls <code>onRender()</code> to give any
+		 * derived classes a chance to handle this call.
+		 * 
+		 * @see onRender
 		 */
 		final public function render():void
 		{
@@ -191,14 +312,42 @@
 				
 				if (_childNodes != null)
 				{
-					Image.pushOffset(new Point(x, y));
-					Image.pushColor(drawOptions.blendColor, drawOptions.alpha);
+					Image.drawState.pushDrawOptions(bounds, drawOptions);
 					
 					_childNodes.render();
 
-					Image.popOffset();
-					Image.popColor();
+					Image.drawState.popDrawOptions();
 				}
+				
+				onRenderComplete();
+			}
+		}
+		
+		/**
+		 * Do cleanup work on this node and any children it might have.
+		 * For example, it releases all internal alarms.
+		 * 
+		 * <p> This function will get called on all nodes in a game state when 
+		 * that game state is exited. However, if you manually remove an
+		 * <code>EfNode</code> from a game state before it is exited, you are
+		 * recommended to call this function yourself. (For example, if you
+		 * kill an enemy node and pull it out of the game state, it is safe
+		 * to call <code>enemyNode.cleanup()</code>.
+		 * 
+		 * <p> This function calls <code>onCleanup()</code> to give any
+		 * derived classes a chance to handle this call.
+		 * 
+		 * @see onCleanup
+		 */
+		final public function cleanup():void
+		{
+			_alarms.clear();
+			onCleanup();
+			
+			if (_childNodes != null)
+			{
+				_childNodes.cleanup();
+				_childNodes = null;
 			}
 		}
 		
@@ -211,12 +360,41 @@
 		protected function onUpdate(offset:Point, elapsedTime:uint):void 
 		{
 		}
-
+	
 		/**
-		 * Override this function in your derived class to handle
-		 * rendering this node.
+		 * Override this function in your derived class to handle rendering this
+		 * node.
 		 */
 		protected function onRender():void 
+		{
+		}
+		
+		/**
+		 * Override this function in your derived class if you need to do
+		 * anything once the node is done updating. This might be useful if you
+		 * had to prepare some temporary resources for the node's children
+		 * while they updated.
+		 */
+		protected function onUpdateComplete():void
+		{
+		}
+		
+		/**
+		 * Override this function in your derived class if you need to do
+		 * anything once the node is done rendering. This might be useful if you
+		 * had to prepare some temporary resources for the node's children
+		 * while they rendered.
+		 */
+		protected function onRenderComplete():void
+		{
+		}
+		
+		/**
+		 * Override this function in your derived class to handle cleaning up
+		 * any internal resources it may have held onto while its parent game
+		 * state was running.
+		 */
+		protected function onCleanup():void
 		{
 		}
 		
@@ -234,27 +412,58 @@
 		protected function set modified(value:Boolean):void { _modified = value; }
 
 		/**
-		 * The internal drawOptions that is updated when . This class is updated when a user makes
-		 * edits to this EfNode. If you call <code>Image.drawXXX(...)</code>,
-		 * be sure to pass this in!
+		 * (Internal access only) Get or set the default width of this node.
+		 * This is the width that is used if the user never explicitly sets the
+		 * size.
 		 */
-		protected function get drawOptions():DrawOptions { return _drawOptions; }
+		protected function get defaultWidth():Number { return _defaultWidth; }
+		protected function set defaultWidth(value:Number):void
+		{
+			if (_defaultWidth != value)
+			{
+				_defaultWidth = value;
+				_modified = true;
+			}
+		}
+			
 
 		/**
-		 * Provide protected access to this node's children. This will throw
-		 * an error if this EfNode was not created with 
-		 * <code>hasChildren = true</code>.
+		 * (Internal access only) Get or set the default height of this node.
+		 * This is the width that is used if the user never explicitly sets the
+		 * size.
+		 */
+		protected function get defaultHeight():Number { return _defaultHeight; }
+		protected function set defaultHeight(value:Number):void
+		{
+			if (_defaultHeight != value)
+			{
+				_defaultHeight = value;
+				_modified = true;
+			}
+		}
+
+		/**
+		 * The internal drawOptions that is updated when the user change's
+		 * any of this node's visual settings (width, height, rotation, color,
+		 * etc.).
+		 * 
+		 * <p> Calls to <code>Image.drawXXX(...)</code> expect a
+		 * <code>DrawOptions</code> argument. Instead of creating your own copy
+		 * at render time, just pass this one in!
+		 */
+		protected function get drawOptions():DrawOptions { return _drawOptions; }
+		
+		/**
+		 * Provide protected access to this node's children.
 		 */
 		protected function get childNodes():EfNodeList
 		{
-			if (_childNodes != null)
+			if (_childNodes == null)
 			{
-				return _childNodes;
+				_childNodes = new EfNodeList(); // Lazy instantiation - create memory for children when requested first time
 			}
-			else
-			{
-				throw new Error("Trying to access children for a childless node. Did you set hasChildren=true in the constructor's super(...)?");
-			}
+
+			return _childNodes;
 		}
 
 		private var _parentState:GameState;
@@ -263,6 +472,8 @@
 		
 		private var _rectArea:Rectangle;
 		private var _drawOptions:DrawOptions;
+		private var _defaultWidth:Number;
+		private var _defaultHeight:Number;
 		private var _modified:Boolean;
 
 		private var _childNodes:EfNodeList;
