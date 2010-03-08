@@ -1,5 +1,6 @@
 ﻿package efme.game.efnodes 
 {
+	import efme.core.graphics2d.Image;
 	import efme.core.graphics2d.support.Align;
 	import efme.core.graphics2d.TextArea;
 	import efme.game.EfNode;
@@ -99,7 +100,7 @@
 		
 		override protected function onRender():void 
 		{
-			_textArea.image.draw(engine.screen, new Point(x, y));
+			_textArea.image.draw(engine.screen, new Point(x, y), drawOptions);
 		}
 		
 		/**

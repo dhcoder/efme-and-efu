@@ -1,6 +1,6 @@
 ﻿package efme.core.graphics2d 
 {
-	import efme.core.graphics2d.Screen;
+	import efme.core.graphics2d.Surface;
 	import efme.core.graphics2d.support.Anchor;
 	import efme.core.graphics2d.support.Color;
 	import efme.core.graphics2d.support.DrawOptions;
@@ -16,14 +16,15 @@
 	
 	
 	/**
-	 * A class which references image data and can render it.
+	 * A class which references image data and can render it to any surface
+	 * (either the screen, or another image, for example).
 	 * 
 	 * <p> The class handles both regular and tiled images. By specifying a
 	 * size in the constructor, you are setting an explicit tile size.
 	 * 
-	 * <p> A call to <code>draw(screen, ...)</code> will draw the whole image,
+	 * <p> A call to <code>draw(surface, ...)</code> will draw the whole image,
 	 * regardless if it's tiled or not. Meanwhile, a call to 
-	 * <code>drawTile(screen, tileX, tileY, ...)</code> will draw a particular
+	 * <code>drawTile(surface, tileX, tileY, ...)</code> will draw a particular
 	 * tile (or nothing if not tiled).
 	 * 
 	 * <p> Additionally, if you need more advanced rendering features, like
@@ -34,23 +35,22 @@
 	 * 
 	 * @see DrawOptions
 	 */
-	public class Image
+	public class Image extends Surface
 	{
 		/**
-		 * The rendering anchor used when drawing images.
+		 * The current draw state. Any calls to any of the
+		 * <code>image.drawXXX(...)</code> functions are affected by the current
+		 * state.
 		 * 
-		 * <p> When you make a call to draw an image at some (X, Y), the
-		 * image is drawn so that the anchor is at that point.
+		 * <p> For example, if you draw a sprite at 100,100, but the draw
+		 * state is set to 200, -50, then the actual sprite will appear at
+		 * 300, 50.
 		 * 
-		 * <p> Common values for this are <code>Anchor.TOP_LEFT</code>
-		 * (this is the common behavior of most 2D rendering libraries) and 
-		 * <code>Anchor.MIDDLE</code> (image centered around X/Y).
+		 * <p> This system allows for hierarchical drawing, where a parent's
+		 * location, color, etc. can affect its children.
 		 * 
-		 * @default Anchor.TOP_LEFT
+		 * @see efme.core.graphics2d.support.DrawState
 		 */
-		public static function get renderAnchor():int { return _renderAnchor; }
-		public static function set renderAnchor(value:int):void { _renderAnchor = value; }
-
 		public static function get drawState():DrawState { return _drawState; }
 		
 		/**
@@ -138,20 +138,11 @@
 		 */
 		public function Image(tileWidth:uint = 0, tileHeight:uint = 0, bitmapData:BitmapData = null)
 		{
+			super(bitmapData);
+			
 			_tileWidth = tileWidth;
 			_tileHeight = tileHeight;
-			_bitmapData = bitmapData;
 		}
-
-		/**
-		 * The height of the image.
-		 */
-		public function get height():uint { return (_bitmapData != null ? _bitmapData.height : 0); }
-
-		/**
-		 * The width of the image.
-		 */
-		public function get width():uint { return (_bitmapData != null ? _bitmapData.width : 0); }
 
 		/**
 		 * If this image is tiled, this is the width of each cell. Will be
@@ -173,7 +164,7 @@
 		 * 
 		 * <p> If you call this on an untiled Image, it will return 0.
 		 */
-		public function get numTilesX():uint { return (_bitmapData != null ? _bitmapData.width / _tileWidth : 0); }
+		public function get numTilesX():uint { return (bitmapData != null ? bitmapData.width / _tileWidth : 0); }
 
 		/**
 		 * This property is provided for convenience, and it gets the number
@@ -181,58 +172,51 @@
 		 * 
 		 * <p> If you call this on an untiled Image, it will return 0.
 		 */
-		public function get numTilesY():uint { return (_bitmapData != null ? _bitmapData.height / _tileHeight : 0); }
+		public function get numTilesY():uint { return (bitmapData != null ? bitmapData.height / _tileHeight : 0); }
 
 		/**
-		 * The inner bitmap data for this image. Don't access this unless you
-		 * know what you're doing!!
-		 */
-		public function get bitmapData():BitmapData { return _bitmapData; }
-		public function set bitmapData(value:BitmapData):void { _bitmapData = value; }
-
-		/**
-		 * Draw this image onto the screen in its entirety.
+		 * Draw this image in its entirety onto a surface.
 		 * 
-		 * @param screen Target screen to render to
+		 * @param surface Target surface to render to
 		 * @param destPoint Target point to render at
 		 * @param drawOptions Additional render options, if needed (default = null)
 		 */
-		public function draw(screen:Screen, destPoint:Point, drawOptions:DrawOptions = null):void
+		public function draw(surface:Surface, destPoint:Point, drawOptions:DrawOptions = null):void
 		{
-			if (_bitmapData != null)
+			if (bitmapData != null)
 			{
-				drawInternal(screen, new Rectangle(0, 0, _bitmapData.width, _bitmapData.height), destPoint, drawOptions);
+				drawInternal(surface, new Rectangle(0, 0, bitmapData.width, bitmapData.height), destPoint, drawOptions);
 			}
 		}
 		
 		/**
-		 * Draw a subportion of this image onto the screen.
+		 * Draw a subportion of this image onto a surface.
 		 * 
-		 * @param screen Target screen to render to
+		 * @param surface Target surface to render to
 		 * @param sourceRect Rectangular subportion of this image to draw
 		 * @param destPoint Target point to render at
 		 * @param drawOptions Additional render options, if needed (default = null)
 		 */
-		public function drawSub(screen:Screen, sourceRect:Rectangle, destPoint:Point, drawOptions:DrawOptions = null):void
+		public function drawSub(surface:Surface, sourceRect:Rectangle, destPoint:Point, drawOptions:DrawOptions = null):void
 		{
-			drawInternal(screen, sourceRect, destPoint, drawOptions);
+			drawInternal(surface, sourceRect, destPoint, drawOptions);
 		}
 		
 		/**
 		 * Draw a tile from within this tiled image. If this is not a tiled
 		 * image, then calling this function generates an error.
 		 * 
-		 * @param screen Target screen to render to
+		 * @param surface Target surface to render to
 		 * @param tileX The X-index of the tile to render
 		 * @param tileY The Y-index of the tile to render
 		 * @param destPoint Target point to render at
 		 * @param drawOptions Additional render options, if needed (default = null)
 		 */
-		public function drawTile(screen:Screen, tileX:uint, tileY:uint, destPoint:Point, drawOptions:DrawOptions = null):void
+		public function drawTile(surface:Surface, tileX:uint, tileY:uint, destPoint:Point, drawOptions:DrawOptions = null):void
 		{
 			if (_tileWidth > 0 && _tileHeight > 0)
 			{
-				drawInternal(screen, new Rectangle(tileX * _tileWidth, tileY * _tileHeight, _tileWidth, _tileHeight), destPoint, drawOptions);
+				drawInternal(surface, new Rectangle(tileX * _tileWidth, tileY * _tileHeight, _tileWidth, _tileHeight), destPoint, drawOptions);
 			}
 			else
 			{
@@ -250,37 +234,28 @@
 		 * drawTile/drawSub.
 		 * 
 		 * <p> Therefore, if you have an <code>Image</code> from which you 
-		 * intend to render lots of subportions or tiles of it to the screen 
+		 * intend to render lots of subportions or tiles of it to a surface 
 		 * (using <code>DrawOptions</code>), you should consider cloning it, so
-		 * each clone can get its own, more stable internall cache.
+		 * each clone can get its own, more stable internal cache.
 		 * 
 		 * @return A cloned image.
 		 */
 		public function clone():Image
 		{
-			return new Image(_tileWidth, _tileHeight, _bitmapData);
+			return new Image(_tileWidth, _tileHeight, bitmapData);
 		}
 		
 		/**
 		 * Internal helper function for all drawXXX function calls.
 		 */
-		private function drawInternal(screen:Screen, sourceRect:Rectangle, destPoint:Point, drawOptions:DrawOptions):void
+		private function drawInternal(surface:Surface, sourceRect:Rectangle, destPoint:Point, drawOptions:DrawOptions):void
 		{
-			if (_bitmapData != null)
+			if (bitmapData != null && surface.bitmapData != null)
 			{
 				//
 				// Prepare destination point - this can be adjusted by the
 				// render anchor and also the global draw-state offset
 				//
-				
-				if (_renderAnchor != Anchor.TOP_LEFT)
-				{
-					var imageRect:Rectangle = new Rectangle(0, 0, sourceRect.width, sourceRect.height);
-					var renderAnchorPoint:Point = Anchor.getAnchorPoint(imageRect, _renderAnchor);
-					
-					destPoint.x -= renderAnchorPoint.x;
-					destPoint.y -= renderAnchorPoint.y;
-				}
 				
 				if (!_drawState.inMatrixMode)
 				{
@@ -293,7 +268,7 @@
 					!_drawState.inMatrixMode)
 				{
 					// Basic rendering. It's super fast!
-					screen.bitmapData.copyPixels(_bitmapData, sourceRect, destPoint);
+					surface.bitmapData.copyPixels(bitmapData, sourceRect, destPoint);
 				}
 				else
 				{
@@ -312,7 +287,7 @@
 					//
 
 					if (sourceRect.x != 0 || sourceRect.y != 0 || 
-						sourceRect.width != _bitmapData.width || sourceRect.height != _bitmapData.height)
+						sourceRect.width != bitmapData.width || sourceRect.height != bitmapData.height)
 					{
 						// If user is trying to render a subportion of this image using
 						// advanced rendering techniques, we need to copy it over to
@@ -322,13 +297,13 @@
 							_bitmapDataX = new BitmapData(sourceRect.width, sourceRect.height);
 							_sourceRectX = sourceRect;
 							
-							_bitmapDataX.copyPixels(_bitmapData, sourceRect, new Point(0, 0));
+							_bitmapDataX.copyPixels(bitmapData, sourceRect, new Point(0, 0));
 						}
 						bitmapDataFinal = _bitmapDataX;
 					}
 					else
 					{
-						bitmapDataFinal = _bitmapData;
+						bitmapDataFinal = bitmapData;
 					}
 					
 					//
@@ -404,7 +379,7 @@
 					//
 					// Everything is set up, so... draw!
 					//
-					screen.bitmapData.draw(bitmapDataFinal, matrix, colorTransform, BlendMode.NORMAL, null, drawOptions.applySmoothing);
+					surface.bitmapData.draw(bitmapDataFinal, matrix, colorTransform, BlendMode.NORMAL, null, drawOptions.applySmoothing);
 				}
 			}
 		}
@@ -414,13 +389,6 @@
 		 * (Flash's unit of preference);
 		 */
 		private static const DEG_TO_RAD:Number = Math.PI / 180.0;
-
-		/**
-		 * Render anchor, option global for all images. As far as I understand
-		 * it, this is a render preference, rather than an option people would
-		 * set per draw call.
-		 */
-		private static var _renderAnchor:int = Anchor.TOP_LEFT;
 
 		/**
 		 * The global draw state. Drawing any images will be affected by the
@@ -435,9 +403,8 @@
 		private static var _blankDrawOptions:DrawOptions = new DrawOptions();
 
 		/**
-		 * The bitmap data that our image will render
+		 * (Optional) Tile size, for tiled images
 		 */
-		private var _bitmapData:BitmapData;
 
 		private var _tileWidth:uint;
 		private var _tileHeight:uint;

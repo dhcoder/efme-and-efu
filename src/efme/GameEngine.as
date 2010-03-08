@@ -240,7 +240,7 @@
 				// Handle render
 				//
 				
-				_screen.beginDraw();
+				_screen.beginUpdate();
 				_screen.clear();
 				
 				onRenderBackground();
@@ -251,7 +251,7 @@
 				}
 				
 				onRenderForeground();
-				_screen.endDraw();
+				_screen.endUpdate();
 
 				//
 				// Check if we should move to the next game state
