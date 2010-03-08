@@ -195,8 +195,6 @@
 
 			_prevFrameTime = flash.utils.getTimer();
 
-			trace(this.graphics);
-			
 			onInit();
 
 			// We're initialized. Kick-off the game timer!
