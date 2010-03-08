@@ -49,8 +49,11 @@
 		 */
 		public function add(alarm:Alarm, startAlarm:Boolean=true, removeWhenDone:Boolean=true):void
 		{
-			_items.push(alarm);
-			
+			if (indexOf(alarm) < 0)
+			{
+				_items.push(alarm);
+			}
+				
 			if (startAlarm)
 			{
 				alarm.start();
@@ -60,6 +63,10 @@
 			{
 				_keepAlarmResident[alarm] = true; // Value doesn't matter, just add it to the dictionary
 				// TODO test this!
+			}
+			else
+			{
+				delete _keepAlarmResident[alarm];
 			}
 		}
 		

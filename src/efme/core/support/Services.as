@@ -47,8 +47,13 @@
 		 * @param classType The type of class that this service is.
 		 * @param obj An instance of the specified class.
 		 */
-		public function register(classType:Class, obj:Object):void
+		public function register(classType:Class, obj:Object = null):void
 		{
+			if (obj == null)
+			{
+				obj = new classType();
+			}
+			
 			if (obj is classType)
 			{
 				_dictServices[classType] = obj;
