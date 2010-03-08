@@ -103,8 +103,8 @@
 		/**
 		 * The font size of this TextArea.
 		 */
-		public function get size():uint { return _textFormat.size as uint; }
-		public function set size(value:uint):void
+		public function get fontSize():uint { return _textFormat.size as uint; }
+		public function set fontSize(value:uint):void
 		{
 			if (_textFormat.size as uint != value)
 			{

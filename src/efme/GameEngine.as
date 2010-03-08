@@ -1,5 +1,6 @@
 ﻿package efme
 {
+	import efme.core.audio.AudioPlayer;
 	import efme.core.input.Keyboard;
 	import efme.core.input.Mouse;
 	import efme.core.support.Assets;
@@ -65,6 +66,7 @@
 			// Members to be initialized after the stage is created.
 			_keyboard = null;
 			_mouse = null;
+			_audioPlayer = null;
 			
 			// TODO: Move this to a better place and expose ability to add
 			// new items to the list. Probably efme.support.ContextMenu?
@@ -97,6 +99,11 @@
 		 * Provide access to this game's mouse state.
 		 */
 		public function get mouse():Mouse { return _mouse; }
+		
+		/**
+		 * Provide access to this game's audio player.
+		 */
+		public function get audioPlayer():AudioPlayer { return _audioPlayer; }
 		
 		/**
 		 * Call this function to start executing your game.
@@ -182,11 +189,14 @@
 			
 			_keyboard = new Keyboard(stage);
 			_mouse = new Mouse(stage);
+			_audioPlayer = new AudioPlayer();
 			
 			_gameState = null;
 
 			_prevFrameTime = flash.utils.getTimer();
 
+			trace(this.graphics);
+			
 			onInit();
 
 			// We're initialized. Kick-off the game timer!
@@ -251,12 +261,11 @@
 				{
 					if (_gameState != null)
 					{
-						_gameState.alarms.clear();
-						_gameState.efNodes.clear();
+						_gameState.exit();
 					}
 					// TODO: Remove all from game state. This clears all nodes and alarms?
 					_gameState = _gameStateNext;
-					_gameState.handleEntered();
+					_gameState.enter();
 					
 					_gameStateNext = null;
 					
@@ -278,6 +287,7 @@
 		
 		private var _keyboard:Keyboard;
 		private var _mouse:Mouse;
+		private var _audioPlayer:AudioPlayer;
 		
 		private var _assets:Assets;
 		private var _services:Services;

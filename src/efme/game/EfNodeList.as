@@ -21,7 +21,7 @@
 		/**
 		 * The number of EfNodes in this list.
 		 */
-		public function get numItems():uint { return _items.length; }
+		public function get length():uint { return _items.length; }
 		
 		/**
 		 * Return the node at the specified index.
@@ -145,6 +145,18 @@
 				_items[nNode].render();
 			}
 		}
+
+		/**
+		 * Call <code>cleanup()</code> on all items in the list.
+		 */
+		public function cleanup():void
+		{
+			for (var nNode:uint = 0; nNode < _items.length; ++nNode)
+			{
+				_items[nNode].cleanup();
+			}
+		}
+		
 		
 		/**
 		 * @inheritDoc

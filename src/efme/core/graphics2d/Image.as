@@ -4,6 +4,7 @@
 	import efme.core.graphics2d.support.Anchor;
 	import efme.core.graphics2d.support.Color;
 	import efme.core.graphics2d.support.DrawOptions;
+	import efme.core.graphics2d.support.DrawState;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
@@ -50,77 +51,7 @@
 		public static function get renderAnchor():int { return _renderAnchor; }
 		public static function set renderAnchor(value:int):void { _renderAnchor = value; }
 
-		public static function pushOffset(offset:Point):void
-		{
-			if (_offsetStack == null)
-			{
-				_offsetStack = new Vector.<Point>();
-			}
-			else
-			{
-				var offsetPrev:Point = _offsetStack[_offsetStack.length - 1];
-				offset.x += offsetPrev.x;
-				offset.y += offsetPrev.y;
-			}
-			
-			_offsetStack.push(offset);
-		}
-		
-		public static function pushColor(color:uint, alpha:Number):void
-		{
-			if (_colorStack == null)
-			{
-				_colorStack = new Vector.<uint>();
-				_alphaStack = new Vector.<Number>();
-			}
-			else
-			{
-				var colorPrev:uint = _colorStack[_colorStack.length - 1];
-				var alphaPrev:Number = _alphaStack[_alphaStack.length - 1];
-				
-				color = Color.blendColors(color, colorPrev);
-				alpha *= alphaPrev;
-			}
-			
-			_colorStack.push(color);
-			_alphaStack.push(alpha);
-		}
-		
-		public static function popOffset():void
-		{
-			if (_offsetStack != null)
-			{
-				_offsetStack.pop();
-				
-				if (_offsetStack.length == 0)
-				{
-					_offsetStack = null;
-				}
-			}
-			else
-			{
-				throw new Error("Extra, unmatched popOffset() called.");
-			}
-		}
-		
-		public static function popColor():void
-		{
-			if (_colorStack != null)
-			{
-				_colorStack.pop();
-				_alphaStack.pop();
-				
-				if (_colorStack.length == 0)
-				{
-					_colorStack = null;
-					_alphaStack = null;
-				}
-			}
-			else
-			{
-				throw new Error("Extra, unmatched popOffset() called.");
-			}
-		}
+		public static function get drawState():DrawState { return _drawState; }
 		
 		/**
 		 * Update the draw state for all Images.
@@ -351,15 +282,15 @@
 					destPoint.y -= renderAnchorPoint.y;
 				}
 				
-				if (_offsetStack != null)
+				if (!_drawState.inMatrixMode)
 				{
-					var offset:Point = _offsetStack[_offsetStack.length - 1];
-					destPoint.x += offset.x;
-					destPoint.y += offset.y;
+					destPoint.x += _drawState.offset.x;
+					destPoint.y += _drawState.offset.y;
 				}
 				
 				if ((drawOptions == null || drawOptions.hasNoEffect()) &&
-					(_colorStack == null || _colorStack[_colorStack.length - 1] == 0xFFFFFF && _alphaStack[_alphaStack.length - 1] == 1.0))
+					(_drawState.color == 0xFFFFFF && _drawState.alpha == 1.0) &&
+					!_drawState.inMatrixMode)
 				{
 					// Basic rendering. It's super fast!
 					screen.bitmapData.copyPixels(_bitmapData, sourceRect, destPoint);
@@ -367,6 +298,8 @@
 				else
 				{
 					// Advanced rendering.
+					
+					if (drawOptions == null) { drawOptions = _blankDrawOptions; }
 
 					var matrix:Matrix = new Matrix();
 					var colorTransform:ColorTransform = null;
@@ -432,6 +365,11 @@
 					matrix.scale(drawOptions.scaleX, drawOptions.scaleY);
 					matrix.translate(destPoint.x, destPoint.y);
 					
+					if (_drawState.inMatrixMode)
+					{
+						matrix.concat(_drawState.matrix);
+					}
+					
 					//
 					// Handle blending colors and setting alpha
 					//
@@ -439,10 +377,14 @@
 					var blendColorFinal:uint = drawOptions.blendColor;
 					var alphaFinal:Number = drawOptions.alpha;
 					
-					if (_colorStack != null)
+					if (_drawState.color != 0xFFFFFF)
 					{
-						blendColorFinal = Color.blendColors(blendColorFinal, _colorStack[_colorStack.length - 1]);
-						alphaFinal *= _alphaStack[_alphaStack.length - 1];
+						blendColorFinal = Color.blendColors(blendColorFinal, _drawState.color);
+					}
+					
+					if (_drawState.alpha < 1.0)
+					{
+						alphaFinal *= _drawState.alpha
 					}
 					
 					if (blendColorFinal != 0xFFFFFF || alphaFinal < 1.0)
@@ -481,14 +423,16 @@
 		private static var _renderAnchor:int = Anchor.TOP_LEFT;
 
 		/**
-		 * The following stack variables are used in the
-		 * <code>pushDrawOptions(drawOptions)</code> call.
+		 * The global draw state. Drawing any images will be affected by the
+		 * current draw state.
 		 */
-		private static var _offsetStack:Vector.<Point> = null;
-		private static var _colorStack:Vector.<uint> = null;
-		private static var _alphaStack:Vector.<Number> = null;
-
-		private static var _matrixStack:Vector.<Matrix> = null;
+		private static var _drawState:DrawState = new DrawState();
+		
+		/**
+		 * A clean set of draw options to use in drawInternal(...) in case
+		 * the user doesn't set anything themselves.
+		 */
+		private static var _blankDrawOptions:DrawOptions = new DrawOptions();
 
 		/**
 		 * The bitmap data that our image will render
