@@ -21,9 +21,9 @@
 		 * Construct this animation state with a target animation.
 		 * 
 		 * @param anim The target animation to track
-		 * @param repeat Whether or not to loop this animation (default = true)
+		 * @param repeat Whether or not to loop this animation (default = false)
 		 */
-		public function AnimationState(targetAnim:Animation, repeat:Boolean = true)
+		public function AnimationState(targetAnim:Animation, repeat:Boolean = false)
 		{
 			_targetAnim = targetAnim;
 			
@@ -39,6 +39,8 @@
 		
 		public function get isPlaying():Boolean { return !_stopped; }
 		public function get isComplete():Boolean { return _animComplete; }
+		
+		public function get playTime():uint { return _timeCounter; }
 
 		/**
 		 * Start this animation from the beginning.
