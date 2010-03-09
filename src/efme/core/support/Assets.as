@@ -1,5 +1,6 @@
 ﻿package efme.core.support
 {
+	import efme.core.audio.SoundEffect;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Loader;
@@ -8,6 +9,7 @@
 	import flash.events.IOErrorEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.media.Sound;
     import flash.net.URLRequest;
 	import flash.utils.Dictionary;
 
@@ -96,8 +98,10 @@
 			_dictLoaderToImage = new Dictionary();
 			_dictImageToLoader = new Dictionary();
 			_dictImageToFilename = new Dictionary();
-			
 			_dictCachedBitmaps = new Dictionary(true);
+
+			_dictSoundToSoundEffect = new Dictionary();
+			_dictSoundEffectToSound = new Dictionary();
 			
 			_numItemsLoading = 0;
 		}
@@ -114,7 +118,7 @@
 		 * Request loading an image file, putting the final result into the specified
 		 * <code>Image</code>, when complete.
 		 * 
-		 * @param strFile The file to load
+		 * @param strFile The file to load (.bmp, .tga, .png, .jpg)
 		 * @param image An instance of an <code>Image</code> to hold the loaded file.
 		 * @param useCache Set to true to cache this image / use an existing image if already loaded.
 		 */
@@ -151,11 +155,39 @@
 			}
 		}
 
-		public function isLoadingImage(image:Image):Boolean
+		/**
+		 * Request a sound file, putting the final result into the specified
+		 * <code>SoundEffect</code>, when complete.
+		 * 
+		 * @param strFile The file to load (.mp3)
+		 * @param soundEffect An instance of a <code>SoundEffect</code> to hold the loaded file.
+		 */
+		public function requestSound(strFile:String, soundEffect:SoundEffect):void
 		{
-			return (_dictImageToLoader[image] != null);
+			if (soundEffect == null)
+			{
+				throw new Error("Passed null soundEffect into Asset.requestSound");
+			}
+			else if (_dictSoundEffectToSound[soundEffect] != null)
+			{
+				throw new Error("Requesting multiple loads into the same soundEffect");
+			}
+
+			var soundData:Sound = new Sound();
+			soundData.addEventListener(Event.COMPLETE, handleLoadSoundEffectComplete);
+			soundData.addEventListener(IOErrorEvent.IO_ERROR, handleLoadSoundEffectFailed);
+			
+			_dictSoundToSoundEffect[soundData] = soundEffect;
+			_dictSoundEffectToSound[soundEffect] = soundData;
+			
+			var request:URLRequest = new URLRequest(strFile);
+			soundData.load(request);
+			++_numItemsLoading;
 		}
-		
+
+		/**
+		 * Function called when an image load succeeds.
+		 */
 		private function handleLoadImageComplete(event:Event):void
 		{
 			var loaderInfo:LoaderInfo = event.target as LoaderInfo;
@@ -170,11 +202,18 @@
 			handleLoadImageFinished(event.target as LoaderInfo);
 		}
 
+		/**
+		 * Function called when an image load fails.
+		 */
 		private function handleLoadImageFailed(event:IOErrorEvent):void
 		{
 			handleLoadImageFinished(event.target as LoaderInfo);
 		}
 		
+		/**
+		 * Function called to clean up after a load image request either
+		 * succeeded or failed.
+		 */
 		private function handleLoadImageFinished(loaderInfo:LoaderInfo):void
 		{
 			var image:Image = _dictLoaderToImage[loaderInfo] as Image;
@@ -185,12 +224,49 @@
 			--_numItemsLoading;
 		}
 
+		/**
+		 * Function called when an sound effect load succeeds.
+		 */
+		private function handleLoadSoundEffectComplete(event:Event):void
+		{
+			var soundData:Sound = event.target as Sound;
+			var soundEffect:SoundEffect = _dictSoundToSoundEffect[soundData] as SoundEffect;
+			
+			soundEffect.soundData = soundData;
+			handleLoadSoundEffectFinished(soundData);
+		}
+
+		/**
+		 * Function called when an sound effect load fails.
+		 */
+		private function handleLoadSoundEffectFailed(event:IOErrorEvent):void
+		{
+			handleLoadSoundEffectFinished(event.target as Sound);
+		}
+		
+		/**
+		 * Function called to clean up after a load sound effect request either
+		 * succeeded or failed.
+		 */
+		private function handleLoadSoundEffectFinished(soundData:Sound):void
+		{
+			var soundEffect:SoundEffect = _dictSoundToSoundEffect[soundData] as SoundEffect;
+			delete _dictSoundToSoundEffect[soundData];
+			delete _dictSoundEffectToSound[soundEffect];
+			
+			--_numItemsLoading;
+		}
+		
+		
 		private var _numItemsLoading:uint;
 		
 		private var _dictLoaderToImage:Dictionary;
 		private var _dictImageToLoader:Dictionary;
 		private var _dictImageToFilename:Dictionary;
-		
 		private var _dictCachedBitmaps:Dictionary;
+		
+		private var _dictSoundToSoundEffect:Dictionary;
+		private var _dictSoundEffectToSound:Dictionary;
+		
 	}
 }
