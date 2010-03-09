@@ -178,14 +178,14 @@
 			updateDefaultSize();
 		}
 
-		public function addAnimation(animIndex:uint, sourceImage:Image, frames:Array, repeat:Boolean = true):void
+		public function addAnimation(animIndex:uint, sourceImage:Image, frames:Array, repeat:Boolean = false):void
 		{
 			if (sourceImage == null) { throw new Error("Attempting to add animation with no source image."); }
 			var animData:Animation = new Animation(sourceImage, frames);
 			addAnimationData(animIndex, animData, repeat);
 		}
 		
-		public function addAnimationData(animIndex:uint, animData:Animation, repeat:Boolean = true):void
+		public function addAnimationData(animIndex:uint, animData:Animation, repeat:Boolean = false):void
 		{
 			if (_dictAnims == null) { _dictAnims = new Dictionary(); }
 			
@@ -256,6 +256,19 @@
 				return false;
 			}
 		}
+		
+		public function getAnimPlayTime():uint
+		{
+			if (_currentAnim >= 0)
+			{
+				return (_dictAnims[_currentAnim] as AnimationState).playTime;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		
 		
 		public function isAnimComplete():Boolean
 		{
