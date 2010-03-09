@@ -67,25 +67,61 @@
 		 * 
 		 * @example The result of calling makeFrames with various arguments.
 		 * <listing version="3.0">
-		 * makeFrames(0,0, 3,0); // => [[0, 0], [1, 0], [2, 0], [3, 0]]
-		 * makeFrames(0,0, 2,1); // => [[
+		 * makeFrames(0,0, 3,0);     // => [[0, 0], [1, 0], [2, 0], [3, 0]]
+		 * makeFrames(0,0, 2,1);     // => [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]]
 		 * </listing>
 		 * 
-		 * @see makeFramesRow
-		 * @see makeFramesX
+		 * @see #makeFramesRow
+		 * @see #makeFramesX
 		 */
 		public static function makeFrames(fromTileX:uint, fromTileY:uint, toTileX:uint, toTileY:uint, frameLength:uint = 0):Array
 		{
 			return makeFramesX(toTileX - fromTileX, fromTileX, fromTileY, toTileX, toTileY);
 		}
 
-		// TODO: Comment
+		/**
+		 * A helper function to create animation frames for animations contained
+		 * in a single row, from left-to-right, in a tiled animation.
+		 * 
+		 * @param frameLength Specify the frame length if you want this animation to have a frame rate different from the default.
+		 * 
+		 * @example The result of calling makeFramesRow with various arguments.
+		 * <listing version="3.0">
+		 * makeFramesRow(0, 0,3);           // => [[0,0], [1,0], [2,0], [3,0]]
+		 * makeFramesRow(1, 2,4);           // => [[2,1], [3,1], [4,1]]
+		 * makeFramesRow(1, 2,4).reverse(); // => [[4,1], [3,1], [2,1]]
+		 * </listing>
+		 * 
+		 * @see #makeFrames
+		 * @see #makeFramesX
+		 */
 		public static function makeFramesRow(tileY:uint, fromTileX:uint, toTileX:uint, frameLength:uint = 0):Array
 		{
 			return makeFramesX(toTileX - fromTileX, fromTileX, tileY, toTileX, tileY, frameLength);
 		}
 		
-		// TODO: Comment
+		/**
+		 * A helper function which, assuming most animations in a tiled image go
+		 * from left-to-right, top-to-bottom, lets you specify just the starting
+		 * and ending tiles, and generates all frames in-between.
+		 * 
+		 * <p> <code>makeFrames(...)</code> assumes that the number of x-tiles
+		 * in your animation can be inferred from the <code>fromX</code> and 
+		 * <code>toX</code> parameters. Call <code>makeFramesX(...)</code> when
+		 * this assumption doesn't hold true.
+		 * 
+		 * @param numTilesX The number of x-tiles per row of this animation. This value is not used in the last row.
+		 * @param frameLength Specify the frame length if you want this animation to have a frame rate different from the default.
+		 * 
+		 * @example The result of calling makeFramesX with various arguments.
+		 * <listing version="3.0">
+		 * makeFrames(0,0, 2,1);     // => [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]]
+		 * makeFramesX(5, 0,0, 2,1); // => [[0,0], [1, 0], [2, 0], [3, 0], [4, 0], [0, 1], [1, 1], [2, 1]]
+		 * </listing>
+		 * 
+		 * @see #makeFrames
+		 * @see #makeFramesRow
+		 */
 		public static function makeFramesX(numTilesX:uint, fromTileX:uint, fromTileY:uint, toTileX:uint, toTileY:uint, frameLength:uint = 0):Array
 		{
 			if (toTileX >= fromTileX && toTileY >= fromTileY)

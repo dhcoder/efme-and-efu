@@ -36,6 +36,7 @@
 			
 			_catSprite = new EfnSprite(this);
 			_catSprite.addAnimation(ANIM_WALK_LEFT, catImage, [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]);
+			// Note, same as addAnimation(ANIM_WALK_LEFT, catImage, Animation.makeFramesRow(0, 0, 5));
 			
 			_textArea = new EfnTextArea(this, "HELLO, WORLD", 20, 200, 0.0, Align.RIGHT);
 		}
@@ -76,7 +77,6 @@
 		
 		private function meow(cry:String = "UNYAAAA!"):void
 		{
-			trace(_catSprite.alarms);
 			trace(cry);
 		}
 	}
