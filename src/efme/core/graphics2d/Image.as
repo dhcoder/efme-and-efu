@@ -325,11 +325,12 @@
 					// Handle rotating
 					//
 					
-					if (drawOptions.rotation != 0.0)
+					var rotation:Number = DrawOptions.normalizeRotation(drawOptions.rotation);
+					if (rotation != 0.0)
 					{
 						var rotateAnchorPoint:Point = Anchor.getAnchorPoint(bitmapDataFinal.rect, drawOptions.rotationAnchor);
 						matrix.translate(-rotateAnchorPoint.x, -rotateAnchorPoint.y);
-						matrix.rotate(drawOptions.rotation * DEG_TO_RAD)
+						matrix.rotate(rotation * DEG_TO_RAD)
 						matrix.translate(rotateAnchorPoint.x, rotateAnchorPoint.y);
 					}
 
