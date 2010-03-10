@@ -59,6 +59,7 @@
 		
 		public function pushTSR(translate:Point, scaleX:Number = 1.0, scaleY:Number = 1.0, rotation:Number = 0.0, rotationAnchor:int = Anchor.MIDDLE, rotationWidth:Number = 0.0, rotationHeight:Number = 0.0):void
 		{
+			rotation = DrawOptions.normalizeRotation(rotation);
 			if (inMatrixMode || scaleX != 1.0 || scaleY != 1.0 || rotation != 0.0)
 			{
 				var matrix:Matrix = new Matrix();

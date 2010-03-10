@@ -11,6 +11,24 @@
 	 */
 	public class DrawOptions
 	{
+		public static function normalizeRotation(rotation:Number):Number
+		{
+			var rotationFinal:Number = rotation;
+			
+			while (rotationFinal >= 360.0)
+			{
+				rotationFinal -= 360.0
+			}
+			
+			while (rotationFinal < 0.0)
+			{
+				rotationFinal += 360.0;
+			}
+			
+			return rotationFinal;
+		}
+
+		
 		/**
 		 * A scale factor, to stretch your image in the X direction.
 		 */
@@ -116,7 +134,7 @@
 				flipY == false &&
 				blendColor == 0xFFFFFF &&
 				alpha == 1.0 &&
-				rotation == 0.0 &&
+				normalizeRotation(rotation) == 0.0 &&
 				applySmoothing == false);
 		}
 		
