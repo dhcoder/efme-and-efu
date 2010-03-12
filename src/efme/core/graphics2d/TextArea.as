@@ -40,6 +40,16 @@
 	public class TextArea
 	{
 		/**
+		 * Register an embedded font with this class. Any request to then
+		 * use a font with the same name will use the embedded font instead
+		 * of a system font.
+		 */
+		public static function registerEmbeddedFont(font:String):void
+		{
+			_embeddedFonts.push(font);
+		}
+		
+		/**
 		 * The default font (or font family) to use for rendering any
 		 * TextArea that doesn't specify its own font.
 		 * 
@@ -50,12 +60,22 @@
 		 */
 		public static function get defaultFont():String { return _defaultFont; }
 		public static function set defaultFont(value:String):void { _defaultFont = value; }
+		
+		/**
+		 * The default text color to use for all <code>TextArea</code>s. If you
+		 * want a particular <code>TextArea</code> to have a different value,
+		 * set its <code>textColor</code>property.
+		 */
+		public static function get defaultTextColor():uint { return _defaultTextColor; }
+		public static function set defaultTextColor(value:uint):void { _defaultTextColor = value; }
 
-		public function TextArea(text:String = "", size:uint = 10, width:Number = 0.0, height:Number = 0.0, textColor:uint = 0xFFFFFF, alignment:int = Align.LEFT, font:String = "") 
+		public function TextArea(text:String = "", size:uint = 10, width:Number = 0.0, height:Number = 0.0, alignment:int = Align.LEFT, font:String = "") 
 		{
+			if (font == "") { font = _defaultFont; }
+			
 			_textField = new TextField();
 			_textField.text = text;
-			_textField.textColor = textColor;
+			_textField.textColor = _defaultTextColor;
 			_textField.multiline = true;
 			_textField.wordWrap = true;
 			
@@ -67,6 +87,11 @@
 			_textFormat.size = size;
 			_textFormat.font = font;
 			_textFormat.leading = 3;
+			
+			if (_embeddedFonts.indexOf(font) >= 0)
+			{
+				_textField.embedFonts = true;
+			}
 			
 			_textField.setTextFormat(_textFormat);
 			
@@ -199,9 +224,13 @@
 		public function get font():String { return _textFormat.font; }
 		public function set font(value:String):void
 		{
+			if (value == "") { value = _defaultFont; }
+
 			if (_textFormat.font != value)
 			{
 				_textFormat.font = value;
+				_textField.embedFonts = _embeddedFonts.indexOf(font) >= 0;
+				
 				_modified = true;
 				renderTextToImage();
 			}
@@ -314,6 +343,8 @@
 		}
 
 		private static var _defaultFont:String = "";
+		private static var _defaultTextColor:uint = 0xFFFFFF;
+		private static var _embeddedFonts:Vector.<String> = new Vector.<String>();
 		
 		private var _textField:TextField;
 		private var _textFormat:TextFormat;
