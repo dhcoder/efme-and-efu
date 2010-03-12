@@ -250,6 +250,7 @@
 		 */
 		private function drawInternal(surface:Surface, sourceRect:Rectangle, destPoint:Point, drawOptions:DrawOptions):void
 		{
+			
 			if (bitmapData != null && surface.bitmapData != null)
 			{
 				//
@@ -259,6 +260,8 @@
 				
 				if (!_drawState.inMatrixMode)
 				{
+					destPoint = destPoint.clone();
+
 					destPoint.x += _drawState.offset.x;
 					destPoint.y += _drawState.offset.y;
 				}
