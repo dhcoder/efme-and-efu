@@ -6,15 +6,16 @@
 	import efme.game.EfNode;
 	import efme.game.GameState;
 	import flash.geom.Point;
+	import flash.utils.getTimer;
 	/**
 	 * An EfNode for rendering text onto the screen into a bounded area.
 	 */
 	public class EfnTextArea extends EfNode
 	{
-		public function EfnTextArea(gameState:GameState, text:String = "", size:uint = 10, width:Number = 0.0, height:Number = 0.0, textColor:uint = 0xFFFFFF, align:int = Align.LEFT, font:String = "")
+		public function EfnTextArea(gameState:GameState, text:String = "", size:uint = 10, width:Number = 0.0, height:Number = 0.0, align:int = Align.LEFT, font:String = "")
 		{
 			super(gameState);
-			_textArea = new TextArea(text, size, width, height, textColor, align, font);
+			_textArea = new TextArea(text, size, width, height, align, font);
 			this.width = width;
 			this.height = height;
 			
@@ -91,10 +92,20 @@
 		{
 			if (modified)
 			{
+				var DEBUG_TIMER:int;
+				DEBUG_TIMER = getTimer();
+				
 				_textArea.beginUpdate();
 				_textArea.width = width;
 				_textArea.height = height;
 				_textArea.endUpdate();
+				
+				DEBUG_TIMER = getTimer() - DEBUG_TIMER;
+				
+				if (DEBUG_TIMER > 3)
+				{
+					trace("LONG TEXT AREA UPDATE:", this.text);
+				}
 			}
 		}
 		
