@@ -188,7 +188,7 @@
 			stage.frameRate = 60;
 			
 			_keyboard = new Keyboard(stage);
-			_mouse = new Mouse(stage);
+			_mouse = new Mouse(stage, screen.scale);
 			_audioPlayer = new AudioPlayer();
 			
 			_gameState = null;
@@ -225,7 +225,7 @@
 			// TODO Some way to let the users handle this? Show a progress bar or something?
 			{
 				onUpdate(elapsedTime);
-				
+
 				if (_gameState != null)
 				{
 					_gameState.update(elapsedTime);
@@ -261,14 +261,13 @@
 					{
 						_gameState.exit();
 					}
+					
 					// TODO: Remove all from game state. This clears all nodes and alarms?
 					_gameState = _gameStateNext;
 					_gameState.enter();
 					
 					_gameStateNext = null;
 					
-					System.gc();
-					System.gc();
 				}
 			}
 		}
