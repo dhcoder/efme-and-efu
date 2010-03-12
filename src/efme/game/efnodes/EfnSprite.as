@@ -1,6 +1,7 @@
 ﻿package efme.game.efnodes 
 {
 	import efme.core.graphics2d.Image;
+	import efme.core.graphics2d.support.Anchor;
 	import efme.core.graphics2d.support.DrawOptions;
 	import efme.core.graphics2d.support.TilePosition;
 	import efme.game.Animation;
@@ -46,6 +47,8 @@
 			_targetTile = null;
 			_targetSubrect = null;
 			
+			_renderAnchor = Anchor.TOP_LEFT;
+			
 			_dictAnims = null;
 			_currentAnim = -1;
 			
@@ -90,6 +93,21 @@
 				modified = true;
 			}
 		}
+
+		/**
+		 * Specify this sprite's render anchor (i.e. the part of the sprite to
+		 * draw at X,Y). Common values for this are TOP_LEFT (default behavior)
+		 * and CENTER (drawn centered at X,Y).
+		 */
+		public function get renderAnchor():int { return _renderAnchor; }
+		public function set renderAnchor(value:int):void { _renderAnchor = value; }
+		
+		/**
+		 * Whether or not this sprite uses smoothing when rendering. Looks better but
+		 * more expensive.
+		 */
+		public function get applySmoothing():Boolean { return drawOptions.applySmoothing; }
+		public function set applySmoothing(value:Boolean):void { drawOptions.applySmoothing = value; }
 		
 		/**
 		 * The current animation that is set. Check <code>isAnimPlaying</code>
@@ -206,6 +224,8 @@
 				var animState:AnimationState = _dictAnims[animIndex];
 				animState.start(callbackAnimComplete);
 				
+				setToAnimFrame();
+				
 				return true;
 			}
 			else
@@ -291,21 +311,9 @@
 			{
 				var animState:AnimationState = _dictAnims[_currentAnim];
 				animState.update(elapsedTime);
+				setToAnimFrame();
 			}
 			
-			// This second "currentAnim >= 0" check might seem useless, but an
-			// animState.update(...) call might have triggered a callback which,
-			// in turn, changed the current animation.
-			if (_currentAnim >= 0)
-			{
-				animState = _dictAnims[_currentAnim]; 
-				
-				modified = (_targetImage != animState.targetAnim.sourceImage);
-				_targetImage = animState.targetAnim.sourceImage;
-				
-				setToTile(animState.currentTile.X, animState.currentTile.Y);
-			}
-
 			if (modified)
 			{
 				if (_targetImage != null)
@@ -336,17 +344,26 @@
 		{
 			if (_targetImage != null)
 			{
+				var renderPoint:Point = new Point(x, y);
+				
+				if (_renderAnchor != Anchor.TOP_LEFT)
+				{
+					var anchorPoint:Point = Anchor.getAnchorPoint(bounds, _renderAnchor);
+					renderPoint.x -= (anchorPoint.x - x);
+					renderPoint.y -= (anchorPoint.y - y);
+				}
+				
 				if (_targetTile != null)
 				{
-					_targetImage.drawTile(engine.screen, _targetTile.X, _targetTile.Y, new Point(x, y), drawOptions);
+					_targetImage.drawTile(engine.screen, _targetTile.X, _targetTile.Y, renderPoint, drawOptions);
 				}
 				else if (_targetSubrect != null)
 				{
-					_targetImage.drawSub(engine.screen, _targetSubrect, new Point(x, y), drawOptions);
+					_targetImage.drawSub(engine.screen, _targetSubrect, renderPoint, drawOptions);
 				}
 				else
 				{
-					_targetImage.draw(engine.screen, new Point(x, y), drawOptions);
+					_targetImage.draw(engine.screen, renderPoint, drawOptions);
 				}
 			}
 		}
@@ -382,11 +399,29 @@
 			}
 		}
 
-		
+		/**
+		 * If an animation is currently running, update this sprite to the
+		 * current frame in the animation.
+		 */
+		private function setToAnimFrame():void
+		{
+			if (_currentAnim >= 0)
+			{
+				var animState:AnimationState = _dictAnims[_currentAnim]; 
+				
+				modified = (_targetImage != animState.targetAnim.sourceImage);
+				_targetImage = animState.targetAnim.sourceImage;
+				
+				setToTile(animState.currentTile.X, animState.currentTile.Y);
+			}
+		}
+
 		private var _targetImage:Image;
 		private var _targetTile:TilePosition;
 		private var _targetSubrect:Rectangle;
 
+		private var _renderAnchor:int;
+	
 		private var _dictAnims:Dictionary;
 		private var _currentAnim:int;
 		
