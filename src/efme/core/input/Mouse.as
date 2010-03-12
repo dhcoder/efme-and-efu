@@ -155,8 +155,8 @@
 		 */
 		private function handleMouseMove(e:MouseEvent):void
 		{
-			_x = e.stageX * _scale;
-			_y = e.stageY * _scale;
+			_x = e.stageX / _scale;
+			_y = e.stageY / _scale;
 		}
 		
 		private static var _showSystemCursor:Boolean = true;
