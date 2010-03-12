@@ -1,6 +1,8 @@
 ﻿package efu.tween 
 {
+	import efme.game.Callback;
 	import efme.game.EfNode;
+	import flash.utils.getTimer;
 	/**
 	 * Class to drive a series of tweens.
 	 * 
@@ -22,36 +24,42 @@
 	{
 		public static function tweenXY(targetNode:EfNode, x:Number, y:Number, tweenLength:uint, nextTween:Tween = null):TweenGroup
 		{
-			var tweenGroup:TweenGroup = new TweenGroup(tweenLength, nextTween);
-			tweenGroup.add(new TweenX(targetNode, x, tweenLength));
-			tweenGroup.add(new TweenY(targetNode, y, tweenLength));
-			return tweenGroup;
+			var tweens:Vector.<Tween> = new Vector.<Tween>();
+			tweens.push(new TweenX(targetNode, x, tweenLength));
+			tweens.push(new TweenY(targetNode, y, tweenLength));
+			
+			return new TweenGroup(tweens, nextTween);
 		}
 		
 		public static function tweenXYR(targetNode:EfNode, x:Number, y:Number, rotation:Number, tweenLength:uint, nextTween:Tween = null):TweenGroup
 		{
-			var tweenGroup:TweenGroup = tweenXY(targetNode, x, y, tweenLength, nextTween);
-			tweenGroup.add(new TweenRotate(targetNode, rotation, tweenLength));
-			return tweenGroup;
+			var tweens:Vector.<Tween> = new Vector.<Tween>();
+			tweens.push(new TweenX(targetNode, x, tweenLength));
+			tweens.push(new TweenY(targetNode, y, tweenLength));
+			tweens.push(new TweenRotate(targetNode, rotation, tweenLength));
+			
+			return new TweenGroup(tweens, nextTween);
 		}
 		
 		public function Tweener() 
 		{
 			_tweens = new Vector.<Tween>();
+			_callbacks = new Vector.<Callback>();
 		}
 		
-		public function add(tween:Tween):void
+		public function add(tween:Tween, callback:Callback = null):void
 		{
 			_tweens.push(tween);
+			_callbacks.push(callback);
+		}
+		
+		public function clear():void
+		{
+			_tweens.splice(0, _tweens.length);
 		}
 		
 		public function update(elapsedTime:uint):void
 		{
-			if (_tweens.length > 0)
-			{
-				trace("IN:", _tweens.length);
-			}
-			
 			for (var nTween:uint = 0; nTween < _tweens.length; ++nTween)
 			{
 				var tween:Tween = _tweens[nTween];
@@ -63,19 +71,22 @@
 				}
 				else
 				{
+					// Tween is finished
+					if (_callbacks[nTween] != null)
+					{
+						_callbacks[nTween].call();
+					}
+					
 					_tweens.splice(nTween, 1);
+					_callbacks.splice(nTween, 1);
+					
 					--nTween;
 				}
 			}
-
-			if (_tweens.length > 0)
-			{
-				trace("OUT:", _tweens.length);
-			}
-
 		}
 		
 		private var _tweens:Vector.<Tween>;
+		private var _callbacks:Vector.<Callback>;
 	}
 
 }
