@@ -33,6 +33,13 @@
 		public function get tweenLength():uint { return _tweenLength; }
 		
 		/**
+		 * The next tween that will follow this one.
+		 */
+		public function get nextTween():Tween { return _nextTween; }
+		public function set nextTween(value:Tween):void { _nextTween = value; }
+		 
+		
+		/**
 		 * Update this tween. When it is finishes updating, it passes on the
 		 * update call to the next tween, if set.
 		 * 
@@ -65,33 +72,43 @@
 			}
 			
 			onUpdate(elapsedTime);
-			
+
 			var leftoverTime:uint = elapsedTime;
 			
-			if (_timeCounter < _tweenLength)
+			var percentComplete:Number = 1.0;
+			if (_tweenLength > 0)
 			{
-				_timeCounter += elapsedTime;
-				
-				if (_timeCounter > _tweenLength)
+				if (_timeCounter < _tweenLength)
 				{
-					leftoverTime = _timeCounter - _tweenLength;
-					_timeCounter = _tweenLength;
+					_timeCounter += elapsedTime;
+					
+					if (_timeCounter > _tweenLength)
+					{
+						leftoverTime = _timeCounter - _tweenLength;
+						_timeCounter = _tweenLength;
+					}
+					else
+					{
+						leftoverTime = 0;
+					}
 				}
-				else
-				{
-					leftoverTime = 0;
-				}
+				percentComplete = (_timeCounter as Number) / (_tweenLength as Number);
 			}
 
-			var percentComplete:Number = (_timeCounter as Number) / (_tweenLength as Number);
 			onTween(percentComplete);
-			
+
 			if (_timeCounter < _tweenLength)
 			{
+				// Still tweening
 				return this;
 			}
 			else
 			{
+				// Done tweening
+				
+				_timeCounter = 0; // Reset in case we come into this tween again
+
+				// Pass any remaining time onto the next tween in the chain
 				if (_nextTween != null)
 				{
 					return _nextTween.update(leftoverTime);
