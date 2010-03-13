@@ -66,7 +66,7 @@
 			// Members to be initialized after the stage is created.
 			_keyboard = null;
 			_mouse = null;
-			_audioPlayer = null;
+			_audio = null;
 			
 			// TODO: Move this to a better place and expose ability to add
 			// new items to the list. Probably efme.support.ContextMenu?
@@ -103,7 +103,7 @@
 		/**
 		 * Provide access to this game's audio player.
 		 */
-		public function get audioPlayer():AudioPlayer { return _audioPlayer; }
+		public function get audio():AudioPlayer { return _audio; }
 		
 		/**
 		 * Call this function to start executing your game.
@@ -189,7 +189,7 @@
 			
 			_keyboard = new Keyboard(stage);
 			_mouse = new Mouse(stage, screen.scale);
-			_audioPlayer = new AudioPlayer();
+			_audio = new AudioPlayer();
 			
 			_gameState = null;
 
@@ -284,7 +284,7 @@
 		
 		private var _keyboard:Keyboard;
 		private var _mouse:Mouse;
-		private var _audioPlayer:AudioPlayer;
+		private var _audio:AudioPlayer;
 		
 		private var _assets:Assets;
 		private var _services:Services;
