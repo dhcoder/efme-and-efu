@@ -186,6 +186,88 @@
 		}
 
 		/**
+		 * Get the data out of an image embedded with AS3's <code>Embed</code>
+		 * tag, putting the loaded image data into the specified 
+		 * <code>Image</code>.
+		 * 
+		 * @param embeddedImage The embedded image. See the example for how to use the <code>Embed</code> tag.
+		 * @param image An instance of an <code>Image</code> to hold the loaded file.
+		 * @param useCache Set to true to cache this image / use an existing image if already loaded.
+		 * 
+		 * @example
+		 * <listing version="3.0">
+		 * [Embed(source="someImage.png")]
+		 * private var someEmbeddedImage:Class;
+		 * 
+		 * public function Constructor()
+		 * {
+		 *   var image:Image = new Image();
+		 *   assets.requestEmbeddedImage(someEmbeddedImage, image);
+		 * }
+		 * </listing>
+		 */
+		public function requestEmbeddedImage(embeddedImage:Class, image:Image, useCache:Boolean = true):void
+		{
+			// TODO: Implement useCache
+			if (embeddedImage == null)
+			{
+				throw new Error("Passed null embeddedImage into Asset.requestEmbeddedImage");
+			}
+			if (image == null)
+			{
+				throw new Error("Passed null image into Asset.requestEmbeddedImage");
+			}
+			else if (_dictImageToLoader[image] != null)
+			{
+				throw new Error("Requesting multiple loads into the same image");
+			}
+
+			if (_dictCachedBitmaps[embeddedImage] != null)
+			{
+				image.bitmapData = _dictCachedBitmaps[embeddedImage] as BitmapData;
+			}
+			else
+			{
+				image.bitmapData = (new embeddedImage() as Bitmap).bitmapData;
+				_dictCachedBitmaps[embeddedImage] = image.bitmapData;
+			}
+		}
+
+		/**
+		 * Get the data out of a sound embedded with AS3's <code>Embed</code>
+		 * tag, putting the loaded sound data into the specified 
+		 * <code>SoundEffect</code>.
+		 * 
+		 * @param embeddedSound The embedded sound. See the example for how to use the <code>Embed</code> tag.
+		 * @param soundEffect An instance of a <code>SoundEffect</code> to hold the loaded sound.
+		 * 
+		 * @example
+		 * <listing version="3.0">
+		 * [Embed(source="someSound.mp3")]
+		 * private var someEmbeddedSound:Class;
+		 * 
+		 * public function Constructor()
+		 * {
+		 *   var soundEffect:SoundEffect = new SoundEffect();
+		 *   assets.requestEmbeddedSound(someEmbeddedSound, image);
+		 * }
+		 * </listing>
+		 */
+		public function requestEmbeddedSound(embeddedSound:Class, soundEffect:SoundEffect):void
+		{
+			if (soundEffect == null)
+			{
+				throw new Error("Passed null soundEffect into Asset.requestEmbeddedSound");
+			}
+			else if (_dictSoundEffectToSound[soundEffect] != null)
+			{
+				throw new Error("Requesting multiple loads into the same soundEffect");
+			}
+
+			soundEffect.soundData = new embeddedSound() as Sound;
+		}
+		
+		/**
 		 * Function called when an image load succeeds.
 		 */
 		private function handleLoadImageComplete(event:Event):void
