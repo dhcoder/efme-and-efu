@@ -104,7 +104,7 @@
 				
 				if (DEBUG_TIMER > 3)
 				{
-					trace("LONG TEXT AREA UPDATE:", this.text);
+					trace("LONG TEXT AREA UPDATE:", DEBUG_TIMER, this.text);
 				}
 			}
 		}
