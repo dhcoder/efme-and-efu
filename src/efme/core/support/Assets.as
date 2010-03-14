@@ -1,5 +1,6 @@
 ﻿package efme.core.support
 {
+	import efme.core.audio.Music;
 	import efme.core.audio.SoundEffect;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -103,6 +104,9 @@
 			_dictSoundToSoundEffect = new Dictionary();
 			_dictSoundEffectToSound = new Dictionary();
 			
+			_dictSoundToMusic = new Dictionary();
+			_dictMusicToSound = new Dictionary();
+			
 			_numItemsLoading = 0;
 		}
 		
@@ -185,6 +189,31 @@
 			++_numItemsLoading;
 		}
 
+		public function requestMusic(strFile:String, music:Music):void
+		{
+			if (music == null)
+			{
+				throw new Error("Passed null music into Asset.requestMusic");
+			}
+			else if (_dictMusicToSound[music] != null)
+			{
+				throw new Error("Requesting multiple loads into the same soundEffect");
+			}
+
+			var soundData:Sound = new Sound();
+			soundData.addEventListener(Event.COMPLETE, handleLoadMusicComplete);
+			soundData.addEventListener(IOErrorEvent.IO_ERROR, handleLoadMusicFailed);
+			
+			_dictSoundToMusic[soundData] = music;
+			_dictMusicToSound[music] = soundData;
+			
+			var request:URLRequest = new URLRequest(strFile);
+			soundData.load(request);
+			++_numItemsLoading;
+		}
+		
+		
+		
 		/**
 		 * Get the data out of an image embedded with AS3's <code>Embed</code>
 		 * tag, putting the loaded image data into the specified 
@@ -266,6 +295,22 @@
 
 			soundEffect.soundData = new embeddedSound() as Sound;
 		}
+
+		// TODO: Comment music asset functions
+		public function requestEmbeddedMusic(embeddedMusic:Class, music:Music):void
+		{
+			if (music == null)
+			{
+				throw new Error("Passed null music into Asset.requestEmbeddedMusic");
+			}
+			else if (_dictMusicToSound[music] != null)
+			{
+				throw new Error("Requesting multiple loads into the same music");
+			}
+
+			music.soundData = new embeddedMusic() as Sound;
+		}
+		
 		
 		/**
 		 * Function called when an image load succeeds.
@@ -338,6 +383,40 @@
 			
 			--_numItemsLoading;
 		}
+
+		/**
+		 * Function called when an music load succeeds.
+		 */
+		private function handleLoadMusicComplete(event:Event):void
+		{
+			var soundData:Sound = event.target as Sound;
+			var music:Music = _dictSoundToMusic[soundData] as Music;
+			
+			music.soundData = soundData;
+			handleLoadMusicFinished(soundData);
+		}
+
+		/**
+		 * Function called when an sound effect load fails.
+		 */
+		private function handleLoadMusicFailed(event:IOErrorEvent):void
+		{
+			handleLoadMusicFinished(event.target as Sound);
+		}
+		
+		/**
+		 * Function called to clean up after a load sound effect request either
+		 * succeeded or failed.
+		 */
+		private function handleLoadMusicFinished(soundData:Sound):void
+		{
+			var music:Music = _dictSoundToMusic[soundData] as Music;
+			delete _dictSoundToMusic[soundData];
+			delete _dictMusicToSound[music];
+			
+			--_numItemsLoading;
+		}
+		
 		
 		
 		private var _numItemsLoading:uint;
@@ -349,6 +428,9 @@
 		
 		private var _dictSoundToSoundEffect:Dictionary;
 		private var _dictSoundEffectToSound:Dictionary;
+
+		private var _dictMusicToSound:Dictionary;
+		private var _dictSoundToMusic:Dictionary;
 		
 	}
 }
